@@ -6,13 +6,13 @@
 <div align="center">
     <h2>Languages and libraries used for this project</h2>
     <h3> Languages </h3>
-    <img height="50" src="https://github.com/dam277/dam277/raw/master/src/images/Javascript.png" />
+    <img height="50" src="https://github.com/dam277/dam277/raw/master/src/images/Python.png" />
                                                                                      <br />
     <h3> Databases </h3>
     <img height="50" src="https://github.com/dam277/dam277/raw/master/src/images/Sql.png" />
                                                                                      <br />
     <h3> Libraries </h3>
-    <img height="50" src="https://github.com/dam277/dam277/raw/master/src/images/DiscordJs.png" />
+    <img height="50" src="https://github.com/dam277/dam277/raw/master/src/images/DiscordPy.png" />
                                                                                      <br />
 </div>
 <div align="center">
