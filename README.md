@@ -36,7 +36,7 @@
    The user can use commands on his channel (commands of this bot) <br />
    Close/Open the channel for everyone/some people <br />
    Commands : /open /close <br />
-   Adding notes datas to the database <br />
+   Adding notes in note lists to the database <br />
    Adding files <br />
    Adding musics and listening to them from the bot
 
