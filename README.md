@@ -43,7 +43,7 @@
    /create_note_list \<name> <br />
    /add_file \<file> \<optional\<isMusic>> <br /> 
    /get_file \<fileName> <br /> 
-   /create_playlist \<name> <br />
+   /create_playlist \<name> \<optional\<description>> \<optional\<image>> <br />
    /add_music_to_playlist \<musicFile> <br />
    /play \<playlistName> \<vocalChannel> \<optional\<loop>> \<optional\<random>> (Display a reaction message with different emotes to control the music (pause, stop, next/previous, etc...))<br />
    Adding notes in note lists to the database <br />
