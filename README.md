@@ -32,8 +32,7 @@
    He can also close this category when he wants and automatically when leaving the voice channel.
 
    ## Features
-   Auto-create a voice channel with the name you want. <br />
-   When user entered this channel, the bot will create a category with the name of the creator and will be automatically move on his own voice channel <br />
+   When user use the command /create_private_channel, the bot will create a category with the name of the creator <br />
    The user can use commands on his channel (commands of this bot) <br />
    Close/Open the channel for everyone/some people
    Adding text datas to the database <br />
