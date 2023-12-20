@@ -35,7 +35,17 @@
    When user use the command /create_private_channel, the bot will create a category with the name of the creator. If the user do not enter the vocal channel before 5 minutes, the category will be deleted. Same if the user disconnect from the voice channel <br />
    The user can use commands on his channel (commands of this bot) <br />
    Close/Open the channel for everyone/some people <br />
-   Commands : /open /close <br />
+   Commands : <br /> 
+   /setup <br /> 
+   /open \<optional\<user>> <br /> 
+   /close \<optional\<user>> <br /> 
+   /add_note \<noteList> \<text> <br /> 
+   /create_note_list \<name> <br />
+   /add_file \<file> \<optional\<isMusic>> <br /> 
+   /get_file \<fileName> <br /> 
+   /create_playlist \<name> <br />
+   /add_music_to_playlist \<musicFile> <br />
+   /play \<playlistName> \<vocalChannel> \<optional\<loop>> \<optional\<random>> (Display a reaction message with different emotes to control the music (pause, stop, next/previous, etc...))<br />
    Adding notes in note lists to the database <br />
    Adding files <br />
    Adding musics and listening to them from the bot
