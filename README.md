@@ -46,7 +46,7 @@
    /get_file \<fileName> <br /> 
    /create_playlist \<name> \<optional\<description>> \<optional\<image>> <br />
    /get_playlist \<name> <br />
-   /add_music_to_playlist \<musicFile> <br />
+   /add_music_to_playlist \<playlistName> \<musicFile> <br />
    /play \<playlistName> \<vocalChannel> \<optional\<loop>> \<optional\<random>> (Display a reaction message with different emotes to control the music (pause, stop, next/previous, etc...))<br />
    /create_private_channel <br />
    Adding notes in note lists to the database <br />
