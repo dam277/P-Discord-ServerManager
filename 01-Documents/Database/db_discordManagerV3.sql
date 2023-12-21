@@ -12,8 +12,8 @@
 -- Database Section
 -- ________________ 
 
-create database MLD;
-use MLD;
+create database db_serverManagerBot;
+use db_serverManagerBot;
 
 
 -- Tables Section
