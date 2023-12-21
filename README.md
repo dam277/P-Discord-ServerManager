@@ -42,7 +42,7 @@
    /add_note \<noteList> \<text> <br /> 
    /create_note_list \<name> <br />
    /get_note_list \<name> <br />
-   /add_file \<file> \<optional\<isMusic>> <br /> 
+   /add_file \<file> \<optional\<type>> <br /> 
    /get_file \<fileName> <br /> 
    /create_playlist \<name> \<optional\<description>> \<optional\<image>> <br />
    /get_playlist \<name> <br />
