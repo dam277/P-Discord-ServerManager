@@ -40,9 +40,12 @@
    /open \<optional\<user>> <br /> 
    /close \<optional\<user>> <br /> 
    /add_note \<noteList> \<text> <br /> 
+   /delete_note \<note> <br />
+   /modify_note \<note> \<text> <br />
    /create_note_list \<name> <br />
    /get_note_list \<name> <br />
    /add_file \<file> \<optional\<type>> <br /> 
+   /delete_file \<file> <br /> 
    /get_file \<fileName> <br /> 
    /create_playlist \<name> \<optional\<description>> \<optional\<image>> <br />
    /get_playlist \<name> <br />
