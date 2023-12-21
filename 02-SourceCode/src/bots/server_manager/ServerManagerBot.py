@@ -5,13 +5,20 @@ import asyncio
 from ..Bot import Bot
 
 class ServerManagerBot(Bot):
-    """ Server manager bot class """
+    """ Server manager bot class 
+    $inherits: Bot"""
     def __init__(self, discord_token):
-        command_prefix = "$"
-        intents = discord.Intents.all()
+        """ Constructor of server manager bot
+        $param discord_token: str => token of the discord bot """
+        command_prefix = "$"                                        # Set command prefix
+        intents = discord.Intents.all()                             # Set the intents list
+        # Set the datas into the parent
         super().__init__(command_prefix, intents, discord_token)
 
+        # Setup bot interactions
         self.events()
+        self.regular_commands()
+        self.slash_commands()
 
     def events(self):
         """ Events of the bot """
