@@ -12,6 +12,7 @@ class ServerManagerBot(Bot):
         $param discord_token: str => token of the discord bot """
         command_prefix = "$"                                        # Set command prefix
         intents = discord.Intents.all()                             # Set the intents list
+        
         # Set the datas into the parent
         super().__init__(command_prefix, intents, discord_token)
 
@@ -27,7 +28,7 @@ class ServerManagerBot(Bot):
             print(f"{message.author} : {message.content}")
             if message.author.bot:
                 return
-
+            
     def regular_commands(self):
         """ regular commands of the bot """
 

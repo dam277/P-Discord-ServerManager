@@ -1,5 +1,6 @@
-2023-12-21 12:03:18 [INFO] Bot initiated
-2023-12-21 12:03:18 [INFO] logging in using static token
-2023-12-21 12:03:19 [INFO] Shard ID None has connected to Gateway (Session ID: c44784286a0ec4e8e11920c4d70487b4).
-2023-12-21 12:03:21 [INFO] Bot is logged on as Server manager#4854
-2023-12-21 12:03:21 [INFO] Successfully Synced 0 commands
+2023-12-21 23:48:12 [INFO] Bot initiated
+2023-12-21 23:48:12 [INFO] logging in using static token
+2023-12-21 23:48:13 [INFO] Shard ID None has connected to Gateway (Session ID: fb60768618c79989e1abfe22d7d41025).
+2023-12-21 23:48:15 [INFO] Bot is logged on as Server manager#4854
+2023-12-21 23:48:15 [INFO] Successfully Synced 0 commands
+2023-12-22 00:17:08 [INFO] Shard ID None has successfully RESUMED session fb60768618c79989e1abfe22d7d41025.
