@@ -1,5 +1,5 @@
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 import os
 from dotenv import load_dotenv
 
@@ -7,10 +7,10 @@ from ..modules.logger import Logger as lg
 
 class Bot:
     """ Bots parent class """
-    def __init__(self, command_prefix: str, intents: discord.Intents, discord_token):
+    def __init__(self, command_prefix: str, intents: nextcord.Intents, discord_token):
         """ Constructor of any Bot 
         $param command_prefix: str => prefix character of regular commands
-        $param intents: discord.Intents => list of discord intents
+        $param intents: nextcord.Intents => list of discord intents
         $param discord_token: str => token of the discord bot """
         lg.Logger.log(lg.LogDefinitions.INFO, f"Bot initiated")
 
@@ -31,7 +31,10 @@ class Bot:
             lg.Logger.log(lg.LogDefinitions.INFO, f"Bot is logged on as {self.bot_instance.user}")
             try:
                 # Sync the commands and get a list of them
-                synced_commands = await self.bot_instance.tree.sync()
+                await self.bot_instance.sync_application_commands()
+                # Get all commands from the bot
+                
+                synced_commands = self.bot_instance.get_application_commands()
                 lg.Logger.log(lg.LogDefinitions.SUCCESS, f"Synced {len(synced_commands)} commands")
             except Exception as e:
                 lg.Logger.log(lg.LogDefinitions.ERROR, e)

@@ -1,6 +1,10 @@
-2023-12-21 23:48:12 [INFO] Bot initiated
-2023-12-21 23:48:12 [INFO] logging in using static token
-2023-12-21 23:48:13 [INFO] Shard ID None has connected to Gateway (Session ID: fb60768618c79989e1abfe22d7d41025).
-2023-12-21 23:48:15 [INFO] Bot is logged on as Server manager#4854
-2023-12-21 23:48:15 [INFO] Successfully Synced 0 commands
-2023-12-22 00:17:08 [INFO] Shard ID None has successfully RESUMED session fb60768618c79989e1abfe22d7d41025.
+2023-12-25 00:48:23 [INFO] Bot initiated
+2023-12-25 00:48:23 [INFO] logging in using static token
+2023-12-25 00:48:24 [INFO] Shard ID None has sent the IDENTIFY payload.
+2023-12-25 00:48:24 [INFO] Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-ss4n",{"micros":77327,"calls":["id_created",{"micros":1037,"calls":[]},"session_lookup_time",{"micros":3148,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-2-63",{"micros":72753,"calls":["start_session",{"micros":66787,"calls":["discord-api-6c869fb97d-x4c88",{"micros":59416,"calls":["get_user",{"micros":10947},"get_guilds",{"micros":5491},"send_scheduled_deletion_message",{"micros":11},"guild_join_requests",{"micros":975},"authorized_ip_coro",{"micros":10}]}]},"starting_guild_connect",{"micros":60,"calls":[]},"presence_started",{"micros":5381,"calls":[]},"guilds_started",{"micros":96,"calls":[]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":380,"calls":[]},"connect_finished",{"micros":384,"calls":[]},"build_ready",{"micros":21,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":21,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 25d55cb06536686dc8b9f221e882d087). Resume URL specified as wss://gateway-us-east1-d.discord.gg
+2023-12-25 00:48:24 [INFO] nextcord.ConnectionState: Registering command with signature ('erer', 1, None)
+2023-12-25 00:48:26 [INFO] Bot is logged on as Server manager#4854
+2023-12-25 00:48:26 [INFO] Successfully Synced 3 commands
+2023-12-25 02:31:21 [INFO] Got a request to RESUME the websocket.
+2023-12-25 02:31:21 [INFO] Shard ID None has sent the RESUME payload.
+2023-12-25 02:31:21 [INFO] Shard ID None has successfully RESUMED session 25d55cb06536686dc8b9f221e882d087 under trace ["gateway-prd-us-east1-d-g6gt",{"micros":3779,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":3490,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-2-63",{"micros":22}]}].
