@@ -43,17 +43,3 @@ class ServerManagerBot(Bot):
             # Create object of the command with the datas
             command = Setup(interaction.guild.id, interaction.guild.name)
             await command.execute(interaction)
-
-        @self.bot_instance.slash_command(name="test", description="test the server into the database")
-        async def test(interaction: nextcord.Interaction):
-            """ Get the commands of the bot """
-            # Create object of the command with the datas
-            command = Setup(interaction.guild.id, interaction.guild.name)
-            await command.execute(interaction)
-
-        @self.bot_instance.slash_command(name="erer", description="test the server into the database")
-        async def erer(interaction: nextcord.Interaction):
-            """ Get the commands of the bot """
-            # Create object of the command with the datas
-            command = Setup(interaction.guild.id, interaction.guild.name)
-            await command.execute(interaction)
