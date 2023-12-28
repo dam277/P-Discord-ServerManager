@@ -34,12 +34,46 @@ class ServerManagerBot(Bot):
         """ regular commands of the bot """
 
     def slash_commands(self):
-        """ slash commands of the bot """
+        """ServerManagerBot.slash_commands()
+
+        Description :
+            Slash commands of the bot
+
+        $Returns : 
+            None
+        """
 
         # ---- Setup command ------------------------
         @self.bot_instance.slash_command(name="setup", description="Setup the server into the database")
         async def setup(interaction: nextcord.Interaction):
-            """ Get the commands of the bot """
+            """
+            # Bot setup command
+            ## Access
+                ServerManagerBot.slash_commands(setup())
+
+            ## Description :
+                Setup the actual discord server (guild) into the database
+
+            ## Parameters : 
+                - interaction : nextcord.Interaction => Interaction with the user
+
+            ## Returns : 
+                None
+            """
             # Create object of the command with the datas
             command = Setup(interaction.guild.id, interaction.guild.name)
             await command.execute(interaction)
+
+        @self.bot_instance.slash_command(name="get_commands", description="Get all the usable commands of the bot")
+        async def get_commands(interaction: nextcord.Interaction):
+            """ServerManagerBot.slash_commands(get_commands())
+
+            Description :
+                Get the commands of the bot
+
+            $Parameters : 
+                - interaction : nextcord.Interaction => Interaction with the user
+
+            $Returns : 
+                None
+            """
