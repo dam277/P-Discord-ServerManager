@@ -6,12 +6,39 @@ from dotenv import load_dotenv
 from ..modules.logger import Logger as lg
 
 class Bot:
-    """ Bots parent class """
-    def __init__(self, command_prefix: str, intents: nextcord.Intents, discord_token):
-        """ Constructor of any Bot 
-        $param command_prefix: str => prefix character of regular commands
-        $param intents: nextcord.Intents => list of discord intents
-        $param discord_token: str => token of the discord bot """
+    """ # Bot parent class
+        
+    Description :
+    ---
+        Manage all discord bots with this base bot class
+
+    Access : 
+    ---
+        src.bots.Bot.py\n
+        Bot
+    """
+    def __init__(self, command_prefix: str, intents: nextcord.Intents, discord_token: str):
+        """ # Bot class constructor
+        
+        Description :
+        ---
+            Construct a bot object to manage discord bot
+        
+        Access : 
+        ---
+            src.bots.Bot.py\n
+            Bot.__init__()
+
+        Parameters : 
+        ---
+            - command_prefix : :class:`str` => Discord bot command prefix
+            - intents : :class:`nextcord.Intents` => Discord bot intents
+            - discord_token : :class:`str` => Discord bot token
+
+        Returns : 
+        ---
+            :class:`None`
+        """
         lg.Logger.log(lg.LogDefinitions.INFO, f"Bot initiated")
 
         # Get the configs and set the bot instance as a commands.Bot object from discord
@@ -25,26 +52,99 @@ class Bot:
         self.shared_slash_commands()
 
     def shared_events(self):
-        """ shared events of the bots """
+        """ # Shared events of the bots
+        
+        Description :
+        ---
+            Setup the shared events for the bots that inherit to this class
+        
+        Access : 
+        ---
+            src.bots.Bot.py\n
+            Bot.shared_events()
+            
+        Returns : 
+        ---
+            :class:`None`
+        """
         @self.bot_instance.event
         async def on_ready():
+            """ # On bot ready event
+            /!\\ This is a coroutine, it needs to be awaited
+        
+            Description :
+            ---
+                Subfunction of shared_events\n
+                Calls when the bot is ready to be connected to discord
+            
+            Access : 
+            ---
+                src.bots.Bot.py\n
+                Bot.shared_events(on_ready())
+                
+            Returns : 
+            ---
+                :class:`None`
+            """
             lg.Logger.log(lg.LogDefinitions.INFO, f"Bot is logged on as {self.bot_instance.user}")
             try:
                 # Sync the commands and get a list of them
                 await self.bot_instance.sync_application_commands()
+
                 # Get all commands from the bot
-                
                 synced_commands = self.bot_instance.get_application_commands()
                 lg.Logger.log(lg.LogDefinitions.SUCCESS, f"Synced {len(synced_commands)} commands")
             except Exception as e:
                 lg.Logger.log(lg.LogDefinitions.ERROR, e)
 
     def shared_regular_commands(self):
-        """ shared regular commands of the bots """
+        """ # Shared regular commands of the bots
+        
+        Description :
+        ---
+            Setup the shared the regular commands for the bots that inherit to this class
+        
+        Access : 
+        ---
+            src.bots.Bot.py\n
+            Bot.shared_regular_commands()
+            
+        Returns : 
+        ---
+            :class:`None`
+        """
 
     def shared_slash_commands(self):
-        """ shared slash commands of the bots """
+        """ # Shared the slash commands of the bots
+        
+        Description :
+        ---
+            Setup the shared the slash commands for the bots that inherit to this class
+        
+        Access : 
+        ---
+            src.bots.Bot.py\n
+            Bot.shared_slash_commands()
+            
+        Returns : 
+        ---
+            :class:`None`
+        """
 
     def run(self):
-        """ Run the bot """
+        """ # Bot run function
+        
+        Description :
+        ---
+            Start a discord bot to use it on discord
+        
+        Access : 
+        ---
+            src.bots.Bot.py\n
+            Bot.run()
+            
+        Returns : 
+        ---
+            :class:`None`
+        """
         self.bot_instance.run(self.configs["discord_token"])
