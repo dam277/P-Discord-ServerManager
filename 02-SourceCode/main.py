@@ -5,7 +5,22 @@ import os
 from src.bots.server_manager.ServerManagerBot import ServerManagerBot
 
 def main():
-    """ Entry point of the program """
+    """ # Main function
+        
+    Description :
+    ---
+        Entry point of the program
+
+    Access : 
+    ---
+        main.py\n
+        main()
+
+    Return :
+    ---
+        :class:`None`
+    """
+    # Set the config of logging and load dotenv
     logging.basicConfig(filename="logs.log", filemode="w", level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s',datefmt='%Y-%m-%d %H:%M:%S')
     load_dotenv()
 

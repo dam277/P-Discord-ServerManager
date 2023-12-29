@@ -3,6 +3,21 @@ from ...Database import Database
 from ..Table import Table
 
 class File(Table):
+    """ # File class
+        
+    Description :
+    ---
+        Manage database files to use database with some specific function to retrieve some datas
+
+    Access : 
+    ---
+        src.database.models.tables.File.py\n
+        File
+
+    inheritance : 
+    ---
+        - Table : :class:`Table` => Parent class of database tables
+    """
     id = None               # Id of the file
     name = None             # Name of the file
     path = None             # Path to the file
@@ -11,11 +26,28 @@ class File(Table):
     TABLE = "file"          # Database table name
 
     def __init__(self, id: int|None, name: str|None, path: str|None, fk_server: int|None):
-        """ Class constructor of a File object 
-        $param id: int => Id of the file
-        $param name: str => Name of the file
-        $param path: str => Path to the file
-        $param fk_server: int => Foreign key of the server id"""
+        """ # Class constructor of File object 
+        
+        Description :
+        ---
+            Construct a file object with parameters passed to use it more easily
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.__init__()
+
+        Parameters : 
+        ---
+            - id : :class:`int` => Id of the file
+            - name : :class:`str` => Name of the file
+            - path : :class:`str` => Path to the file
+            - fk_server : :class:`int` => Foreign key of the server id
+
+        Returns : 
+        ---
+            :class:`None`
+        """
         self.id = id
         self.name = name
         self.path = path
@@ -23,8 +55,23 @@ class File(Table):
 
     @staticmethod
     async def get_all_files():
-        """ Get all the files of the database """
+        """ # Get all file function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get all the files stored in the database table
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.get_all_files()
 
+        Returns : 
+        ---
+            :class:`list[File]` => List of files
+        """
         # Get the query string
         query = f"SELECT * FROM {File.TABLE};"
 
@@ -34,9 +81,27 @@ class File(Table):
     
     @staticmethod
     async def get_file_by_id(id_file: int):
-        """ Get a file by id 
-        $param id_file: int -> file id"""
+        """ # Get a file by id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get one file stored in the database table by its id
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.get_file_by_id()
 
+        Parameters : 
+        ---
+            - id_file : :class:`int` => Searched file id
+
+        Returns : 
+        ---
+            :class:`File|None` => The file which was got in database
+        """
         # Get the query string
         where = "id_file = %(id_file)s"
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
@@ -47,9 +112,27 @@ class File(Table):
     
     @staticmethod
     async def get_file_by_name(name: str):
-        """ Get a file by name 
-        $param name: str -> file name"""
+        """ # Get a file by name function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get one file stored in the database table by its name
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.get_file_by_name()
 
+        Parameters : 
+        ---
+            - name : :class:`str` => Searched file name
+
+        Returns : 
+        ---
+            :class:`File|None` => The file which was got in database
+        """
         # Get the query string
         where = "name = %(name)s"
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
@@ -61,12 +144,29 @@ class File(Table):
 
     @staticmethod
     async def add_file(name: str, path: str, fk_server: int) -> str:
-        """ Add a file to the database 
-        $param name: str -> name of the file
-        $param path: str -> path of the file
-        $param fk_server: int -> foreign key of the server
-        Return message: str -> Message to send to the server"""
+        """ # Add file function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
         
+        Description :
+        ---
+            Add a new file into the database with the right server (guild) associated
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.add_file()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => File name
+            - path : :class:`str` => File path
+            - fk_server : :class:`int` => Associated server foreign key
+
+        Returns : 
+        ---
+            :class:`str` => The message which will be sent to the user
+        """
         # Get the query string
         fields = "(id_file, name, path, fk_server)"
         params = "(%(id_file)s, %(name)s, %(path)s, %(fk_server)s)"
@@ -89,10 +189,27 @@ class File(Table):
         
     @staticmethod
     async def get_file_by_path(path: str):
-        """ Get a file by its path
-        $param path: str -> file path
-        Return File"""
+        """ # Get file by path function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get a file by its path
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.get_file_by_path()
 
+        Parameters : 
+        ---
+            - path : :class:`str` => Searched file path 
+
+        Returns : 
+        ---
+            :class:`File|None` => The file which was got in database
+        """
         # Get the query string
         where = "path = %(path)s"
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
@@ -103,10 +220,27 @@ class File(Table):
     
     @staticmethod
     async def get_files_by_server_id(id_server: int):
-        """ Get files by the the server id
-        $param id_server: int -> server id
-        Return list[File]"""
-         
+        """ # Get file by server id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get a list of files using the server id
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.get_files_by_server_id()
+
+        Parameters : 
+        ---
+            - id_server : :class:`int` => Searched server id
+
+        Returns : 
+        ---
+            :class:`list[File]` => A list of files got
+        """
         where = "file.fk_server = %(fk_server)s"
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
@@ -119,9 +253,26 @@ class File(Table):
 
     @staticmethod
     def format_object(cursor_result: MySQLCursor):
-        """ Format a database result into a object 
-        $param cursor_result: MySQLCursor -> result of the query 
-        Return None | file -> None for no data, file for successfully getting data """
+        """ # Format object function
+        @staticmethod
+        
+        Description :
+        ---
+            Format a :class:`File` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.format_object()
+
+        Parameters : 
+        ---
+            - cursor_result : :class:`MySQLCursor` => Result of the query
+
+        Returns : 
+        ---
+            :class:`File|None` => A file object
+        """
         # Getting datas from result
         row = Table.get_one_row(cursor_result[0])
 
@@ -135,9 +286,26 @@ class File(Table):
     
     @staticmethod
     def format_list_object(cursor_result: MySQLCursor) -> list:
-        """ Format a database result into a object 
-        $param cursor_result: MySQLCursor -> result of the query 
-        Return None | list[file] -> None for no data, list of files for successfully getting datas """
+        """ # Format list object function
+        @staticmethod
+        
+        Description :
+        ---
+            Format a :class:`File` object list by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.format_list_object()
+
+        Parameters : 
+        ---
+            - cursor_result : :class:`MySQLCursor` => Result of the query
+
+        Returns : 
+        ---
+            :class:`list[File]|None` => A list of file object
+        """
         # Getting datas from result
         rows = Table.get_all_rows(cursor_result[0])
         
