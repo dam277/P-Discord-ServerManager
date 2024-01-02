@@ -3,6 +3,21 @@ from ...Database import Database
 from ..Table import Table
 
 class Server(Table):
+    """ # Server class
+        
+    Description :
+    ---
+        Manage database Servers to use database with some specific function to retrieve some datas
+
+    Access : 
+    ---
+        src.database.models.tables.Server.py\n
+        Server
+
+    inheritance : 
+    ---
+        - Table : :class:`Table` => Parent class of database tables
+    """
     id = None               # Id of the server
     guild_id = None         # Id of the guild
     name = None             # Name of the server
@@ -10,18 +25,50 @@ class Server(Table):
     TABLE = "server"        # Name of the server table
 
     def __init__(self, id: int|None, guild_id: int|None, name: str|None):
-        """ Class constructor of a Server object 
-        $param id: int => Id of the Server
-        $param guild_id: int => guild_id of the Server
-        $param name: str => name to the Server """
+        """ # Class constructor of Server object 
+        
+        Description :
+        ---
+            Construct a server object with parameters passed to use it more easily
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.__init__()
+
+        Parameters : 
+        ---
+            - id : :class:`int` => Id of the Server
+            - guild_id : :class:`int` => Id of the guild
+            - name : :class:`str` => Name of the server
+
+        Returns : 
+        ---
+            :class:`None`
+        """
         self.id = id
         self.guild_id = guild_id
         self.name = name
 
     @staticmethod
     async def get_all_servers():
-        """ Get all the servers of the database """
+        """ # Get all servers function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get all the Servers stored in the database table
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.get_all_servers()
 
+        Returns : 
+        ---
+            :class:`list[Server]` => List of Servers
+        """
         # Get the query string
         query = f"SELECT * FROM {Server.TABLE};"
 
@@ -31,11 +78,28 @@ class Server(Table):
 
     @staticmethod
     async def create_server(guild_id: int, name: str) -> str:
-        """ Create a server into the database 
-        $param guild_id: Guild -> Discord server id
-        $param name: string -> Discord server name
-        Return message: str -> Message to send to the server"""
+        """ # Create server function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Create a new server into the database
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.create_server()
 
+        Parameters : 
+        ---
+            - guild_id : :class:`int` => discord guild id
+            - name : :class:`str` => Server name
+
+        Returns : 
+        ---
+            :class:`str` => The message which will be sent to the user
+        """
         # Get the query string
         fields = "(id_server, guildId, name)"
         params = "(%(id_server)s, %(guildId)s, %(name)s)"
@@ -58,10 +122,27 @@ class Server(Table):
     
     @staticmethod
     async def get_server_by_guild_id(guild_id: int):
-        """ Get a server by guild id
-        $param guild_id: int -> Discord server id
-        Return format_object()"""
+        """ # Get server by guild_id id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get a server using the guild id
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.get_server_by_guild_id()
 
+        Parameters : 
+        ---
+            - guild_id : :class:`int` => Searched guild id
+
+        Returns : 
+        ---
+            :class:`Server` => Servers object got
+        """
         # Get the query string
         where = "guildId = %(guildId)s"
         query = f"SELECT * FROM {Server.TABLE} WHERE {where};"
@@ -72,10 +153,27 @@ class Server(Table):
     
     @staticmethod
     async def get_server_id_by_guild_id(guild_id: int):
-        """ Get a server id by guild id
-        $param guild_id: int -> Discord server id
-        Return format_object()"""
+        """ # Get Server id by guild id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get a list of Server id using the guild id
+        
+        Access : 
+        ---
+            src.database.models.tables.Server\n
+            Server.get_server_id_by_guild_id()
 
+        Parameters : 
+        ---
+            - guild_id : :class:`int` => Searched guild id
+
+        Returns : 
+        ---
+            :class:`int` => Server id
+        """
         # Get the query string
         where = "guildId = %(guildId)s"
         query = f"SELECT id_server FROM {Server.TABLE} WHERE {where};"
@@ -88,10 +186,26 @@ class Server(Table):
 
     @staticmethod
     def format_object(cursor_result: MySQLCursor):
-        """ Format a database result into a object 
-        $param cursor_result: MySQLCursor -> result of the query 
-        Return None | Server -> None for no data, Server for successfully getting data """
+        """ # Format object function
+        @staticmethod
+        
+        Description :
+        ---
+            Format a :class:`Server` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.format_object()
 
+        Parameters : 
+        ---
+            - cursor_result : :class:`MySQLCursor` => Result of the query
+
+        Returns : 
+        ---
+            :class:`Server|None` => A Server object
+        """
         # Getting datas from result
         row = Table.get_one_row(cursor_result[0])
 
@@ -105,10 +219,26 @@ class Server(Table):
     
     @staticmethod
     def format_list_object(cursor_result: MySQLCursor) -> list:
-        """ Format a database result into a object 
-        $param cursor_result: MySQLCursor -> result of the query 
-        Return None | list[Server] -> None for no data, list of servers for successfully getting datas """
+        """ # Format list object function
+        @staticmethod
         
+        Description :
+        ---
+            Format a :class:`Server` object list by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.format_list_object()
+
+        Parameters : 
+        ---
+            - cursor_result : :class:`MySQLCursor` => Result of the query
+
+        Returns : 
+        ---
+            :class:`list[Server]|None` => A list of Server object
+        """
         # Getting datas from result
         rows = Table.get_all_rows(cursor_result[0])
 
