@@ -1,9 +1,12 @@
 import nextcord
 from nextcord.ext import commands
+from colorama import Fore
+
 from ..Bot import Bot
 from .bot_commands.setup.Setup import Setup
 from .bot_commands.cmds.GetCommands import GetCommands
-from colorama import Fore
+from .bot_commands.files.AddFile import AddFile
+from ...modules.logger.Logger import Logger, LogDefinitions
 
 class ServerManagerBot(Bot):
     """ # Server manager bot class
@@ -41,6 +44,7 @@ class ServerManagerBot(Bot):
         ---
             :class:`None`
         """
+        Logger.log(LogDefinitions.INFO, f"Constructing {__class__.__name__} object")
         command_prefix = "$"                                        # Set command prefix
         intents = nextcord.Intents.all()                            # Set the intents list
 
@@ -68,6 +72,8 @@ class ServerManagerBot(Bot):
         ---
             :class:`None`
         """
+        Logger.log(LogDefinitions.INFO, f"Setting up {__class__.__name__} events")
+
         @self.bot_instance.event
         async def on_message(message: nextcord.Message):
             if message.content.startswith(self.bot_instance.command_prefix):
@@ -78,7 +84,6 @@ class ServerManagerBot(Bot):
                 # Check if the author is the bot himself
                 if message.author == self.bot_instance.user:
                     return
-                
             
     def regular_commands(self):
         """ # Regular commands of the bot
@@ -96,6 +101,7 @@ class ServerManagerBot(Bot):
         ---
             :class:`None`
         """
+        Logger.log(LogDefinitions.INFO, f"Setting up {__class__.__name__} regular commands")
 
     def slash_commands(self):
         """ # Slash commands of the bot
@@ -113,6 +119,7 @@ class ServerManagerBot(Bot):
         ---
             :class:`None`
         """
+        Logger.log(LogDefinitions.INFO, f"Setting up {__class__.__name__} slash commands")
 
         # ---- Setup command ------------------------
         @self.bot_instance.slash_command(name="setup", description="Setup the server into the database")
@@ -141,6 +148,7 @@ class ServerManagerBot(Bot):
             command = Setup(interaction.guild.id, interaction.guild.name)
             await command.execute(interaction)
 
+        # ---- Get commands command ------------------------
         @self.bot_instance.slash_command(name="get_commands", description="Get all the usable commands of the bot")
         async def get_commands(interaction: nextcord.Interaction):
             """ # Bot get_commands command
@@ -166,3 +174,114 @@ class ServerManagerBot(Bot):
             """
             command = GetCommands(slash_commands=self.bot_instance.get_all_application_commands(), regular_commands=self.bot_instance.commands)
             await command.execute(interaction)
+
+        #region ---- Add commands ------------------------
+        @self.bot_instance.slash_command(name="add", description="Add something")
+        async def add(interaction: nextcord.Interaction):
+            """" Bot add command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Add something to the server\n
+                This command is a parent command for the subcommands
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(add())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns :
+            ---
+                :class:`None` 
+            """
+            pass
+        
+        #region ---- subcommands ------------------------
+        @add.subcommand(name="file", description="Add a file to the server")
+        async def add_file(interaction: nextcord.Interaction, file: nextcord.Attachment):
+            """ Bot add file subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Add a file to the server\n
+                This command is a subcommand of the add command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(add_file())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - file : :class:`nextcord.Attachment` => File to add to the server
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = AddFile(interaction.guild.id, file)
+            await command.execute(interaction)
+        #endregion ---- subcommands ------------------------
+        #endregion ---- Add commands ------------------------
+
+        #region ---- Delete commands ------------------------
+        @self.bot_instance.slash_command(name="delete", description="Delete something")
+        async def delete(interaction: nextcord.Interaction):
+            """ Bot delete command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Delete something from the server\n
+                This command is a parent command for the subcommands
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(delete())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns :
+            ---
+                :class:`None` 
+            """
+            pass
+
+        #region ---- subcommands ------------------------
+        @delete.subcommand(name="file", description="Delete a file from the server")
+        async def delete_file(interaction: nextcord.Interaction, file_name: str):
+            """ Bot delete file subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Delete a file from the server\n
+                This command is a subcommand of the delete command
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(delete_file())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+                file_name :class:`str`: The name of the file to be deleted.
+            
+            Returns:
+                :class:`None`
+            """
+            # Code to delete a file from the server
+            await interaction.response.send_message("File deleted from the server")
+        #endregion ---- subcommands ------------------------
+        #endregion ---- Delete commands ------------------------
+        

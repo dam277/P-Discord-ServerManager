@@ -3,7 +3,7 @@ from nextcord.ext import commands
 import os
 from dotenv import load_dotenv
 
-from ..modules.logger import Logger as lg
+from ..modules.logger.Logger import Logger, LogDefinitions
 
 class Bot:
     """ # Bot parent class
@@ -39,7 +39,7 @@ class Bot:
         ---
             :class:`None`
         """
-        lg.Logger.log(lg.LogDefinitions.INFO, f"Bot initiated")
+        Logger.log(LogDefinitions.INFO, f"Bot initiated")
 
         # Get the configs and set the bot instance as a commands.Bot object from discord
         load_dotenv()
@@ -86,16 +86,16 @@ class Bot:
             ---
                 :class:`None`
             """
-            lg.Logger.log(lg.LogDefinitions.INFO, f"Bot is logged on as {self.bot_instance.user}")
+            Logger.log(LogDefinitions.INFO, f"Bot is logged on as {self.bot_instance.user}")
             try:
                 # Sync the commands and get a list of them
                 await self.bot_instance.sync_application_commands()
 
                 # Get all commands from the bot
                 synced_commands = self.bot_instance.get_application_commands()
-                lg.Logger.log(lg.LogDefinitions.SUCCESS, f"Synced {len(synced_commands)} commands")
+                Logger.log(LogDefinitions.SUCCESS, f"Synced {len(synced_commands)} commands")
             except Exception as e:
-                lg.Logger.log(lg.LogDefinitions.ERROR, e)
+                Logger.log(LogDefinitions.ERROR, e)
 
     def shared_regular_commands(self):
         """ # Shared regular commands of the bots

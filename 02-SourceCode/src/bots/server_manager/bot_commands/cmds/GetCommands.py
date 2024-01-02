@@ -41,6 +41,7 @@ class GetCommands(Command):
         """
         self.slash_commands = slash_commands
         self.regular_commands = regular_commands
+        super().__init__()
 
     async def execute(self, interaction: nextcord.Interaction):
         """ # Execute command function

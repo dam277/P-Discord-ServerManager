@@ -71,3 +71,44 @@ class Music(File):
         cursor_result = await Database.get_instance().simple_exec(query)
         return Music.format_list_object(cursor_result)
     
+    @staticmethod
+    async def add_file(name: str, path: str, fk_server: int):
+        """ # Add file Music function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Add a Music to the database table
+            Override the parent function to add a file to the database
+        
+        Access : 
+        ---
+            src.database.models.tables.files.Music.py\n
+            Music.add_file()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Name of the Music
+            - path : :class:`str` => Path to the Music
+            - fk_server : :class:`int` => Foreign key of the server id
+
+        Returns : 
+        ---
+            :class:`None`
+        """
+        message = await File.add_file(name, path, fk_server)
+        
+        # Get the query string
+        fields = "(id_file)"
+        params = "(%(id_file)s)"
+        query = f"INSERT INTO {Music.TABLE} {fields} VALUES {params};"
+
+        # Execute the query with the values
+        result = await Database.get_instance().bind_exec(query, {"id_file": await Music.get_last_file_id()})
+        if result[1] is False:
+            return result[0]
+        
+        # Return the message
+        return message.replace("file", "music")
+    

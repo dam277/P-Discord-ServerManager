@@ -43,6 +43,7 @@ class Setup(Command):
         """
         self.guild_id = guild_id
         self.name = name
+        super().__init__()
 
     async def execute(self, interaction: nextcord.Interaction):
         """ # Execute command function

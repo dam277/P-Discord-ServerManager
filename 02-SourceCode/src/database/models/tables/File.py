@@ -80,6 +80,32 @@ class File(Table):
         return File.format_list_object(cursor_result)
     
     @staticmethod
+    async def get_last_file_id():
+        """ # Get the last file id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get the last id of the file table
+            
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.get_last_file_id()
+
+        Returns : 
+        ---
+            :class:`int|None` => The last id of the file table, or None if no records exist
+        """
+        # Get the query string
+        query = f"SELECT * FROM {File.TABLE} WHERE id_file = (SELECT MAX(id_file) FROM file)"
+
+        # Get the result by executing query into the database
+        cursor_result = await Database.get_instance().simple_exec(query)
+        return File.format_object(cursor_result).id
+    
+    @staticmethod
     async def get_file_by_id(id_file: int):
         """ # Get a file by id function
         /!\\ This is a coroutine, it needs to be awaited
