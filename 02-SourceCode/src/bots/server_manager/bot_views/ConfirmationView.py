@@ -13,7 +13,7 @@ class ConfirmationView(nextcord.ui.View):
 
     Access :
     ---
-        src.bots.server_manager.views.ConfirmationView.py\n
+        src.bots.server_manager.bot_views.ConfirmationView.py\n
         ConfirmationView
     """
     def __init__(self):
@@ -25,7 +25,7 @@ class ConfirmationView(nextcord.ui.View):
 
         Access :
         ---
-            src.bots.server_manager.views.ConfirmationView.py\n
+            src.bots.server_manager.bot_views.ConfirmationView.py\n
             ConfirmationView.__init__()
 
         Returns :
@@ -46,7 +46,7 @@ class ConfirmationView(nextcord.ui.View):
         
         Access :
         ---
-            src.bots.server_manager.views.ConfirmationView.py\n
+            src.bots.server_manager.bot_views.ConfirmationView.py\n
             ConfirmationView.confirm()
         
         Parameters :
@@ -72,7 +72,7 @@ class ConfirmationView(nextcord.ui.View):
 
         Access :
         ---
-            src.bots.server_manager.views.ConfirmationView.py\n
+            src.bots.server_manager.bot_views.ConfirmationView.py\n
             ConfirmationView.cancel()
         
         Parameters :

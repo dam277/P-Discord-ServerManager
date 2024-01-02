@@ -2,7 +2,7 @@ import nextcord
 from nextcord.ext import commands
 import os
 
-from ...views.ConfirmationView import ConfirmationView
+from ...bot_views.ConfirmationView import ConfirmationView
 from ....commands.Command import Command
 from .....database.models.tables.Server import Server
 from .....modules.logger.Logger import Logger, LogDefinitions

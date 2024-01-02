@@ -176,7 +176,7 @@ class Server(Table):
         """
         # Get the query string
         where = "guildId = %(guildId)s"
-        query = f"SELECT id_server FROM {Server.TABLE} WHERE {where};"
+        query = f"SELECT * FROM {Server.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
         cursor_result = await Database.get_instance().bind_exec(query, {"guildId": guild_id})

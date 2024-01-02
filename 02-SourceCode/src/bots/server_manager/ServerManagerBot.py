@@ -6,6 +6,8 @@ from ..Bot import Bot
 from .bot_commands.setup.Setup import Setup
 from .bot_commands.cmds.GetCommands import GetCommands
 from .bot_commands.files.AddFile import AddFile
+from .bot_commands.files.DeleteFile import DeleteFile 
+from .bot_autocompletes.files.FileAutocomplete import FileAutocomplete
 from ...modules.logger.Logger import Logger, LogDefinitions
 
 class ServerManagerBot(Bot):
@@ -275,13 +277,36 @@ class ServerManagerBot(Bot):
 
             Parameters:
                 interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
-                file_name :class:`str`: The name of the file to be deleted.
             
             Returns:
                 :class:`None`
             """
-            # Code to delete a file from the server
-            await interaction.response.send_message("File deleted from the server")
+            command = DeleteFile(interaction.guild.id, file_name)
+            await command.execute(interaction)
+            
+        # Create autocomplete function for delete file subcommand
+        @delete_file.on_autocomplete("file_name")
+        async def delete_file_autocomplete(interaction: nextcord.Interaction, file_name: str):
+            """ Bot delete file autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the delete file subcommand
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(delete_file_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = FileAutocomplete(file_name, interaction.guild.id)
+            return await autocomplete.execute(interaction)
         #endregion ---- subcommands ------------------------
         #endregion ---- Delete commands ------------------------
         
