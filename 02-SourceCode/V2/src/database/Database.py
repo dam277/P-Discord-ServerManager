@@ -1,4 +1,5 @@
 import mysql.connector as connector
+from mysql.connector.cursor import MySQLCursor
 import os
 import dotenv
 
@@ -73,7 +74,7 @@ class Database:
             Database.instance = Database()
         return Database.instance
     
-    async def bind_exec(self, query, values):
+    async def bind_exec(self, query, values) -> tuple[MySQLCursor|str, bool]:
         """ # Bind database execution
         /!\\ This is a coroutine, it needs to be awaited
         
@@ -106,7 +107,7 @@ class Database:
             Logger.log(LogDefinitions.ERROR, f"Exception while using database binded execute : {err}")
             return err.msg, False
     
-    async def simple_exec(self, query):
+    async def simple_exec(self, query) -> tuple[MySQLCursor|str, bool]:
         """ # Simple database execution
         /!\\ This is a coroutine, it needs to be awaited
         

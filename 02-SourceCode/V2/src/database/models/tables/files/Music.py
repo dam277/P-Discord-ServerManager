@@ -20,7 +20,7 @@ class Music(File):
     """
     TABLE = "music"          # Database table name
 
-    def __init__(self, id: int|None, name: str|None, path: str|None, fk_server: int|None):
+    def __init__(self, id: int, name: str, path: str, fk_server: int):
         """ # Class constructor of Music object 
         
         Description :
@@ -68,8 +68,11 @@ class Music(File):
         query = f"SELECT * FROM {Music.TABLE};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return Music.format_list_object(cursor_result)
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return Music.format_list_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def add_file(name: str, path: str, fk_server: int) -> str:
@@ -106,11 +109,10 @@ class Music(File):
 
         # Execute the query with the values
         result = await Database.get_instance().bind_exec(query, {"id_file": await Music.get_last_file_id()})
-        if result[1] is False:
-            return result[0]
-        
-        # Return the message
-        return message.replace("file", "music")
+        if result[1] is True:
+            return message.replace("file", "music")
+        else:
+            return result[0]    
     
     @staticmethod
     async def delete_file_by_id(id_file: int) -> str:
@@ -142,9 +144,6 @@ class Music(File):
         # Get the result by executing query into the database
         result = await Database.get_instance().bind_exec(query, {"id_file": id_file})
         if result[1] is True:
-            message = await File.delete_file_by_id(id_file)
+            return await File.delete_file_by_id(id_file)
         else:
-            message = result[0]
-
-        # Return the message to the user
-        return message
+            return result[0]

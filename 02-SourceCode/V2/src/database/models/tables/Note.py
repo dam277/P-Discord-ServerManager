@@ -25,7 +25,7 @@ class Note(Table):
 
     TABLE = "note"          # Name of the table
 
-    def __init__(self, id: int|None, title: str|None, text: str|None, fk_note_list: int|None):
+    def __init__(self, id: int, title: str, text: str, fk_note_list: int):
         """ # Class constructor of Note object 
         
         Description :
@@ -76,8 +76,11 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return Note.format_list_object(cursor_result)
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return Note.format_list_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_note_by_id(id_note: int) -> "Note":
@@ -107,8 +110,11 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
         
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"id_note": id_note})
-        return Note.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"id_note": id_note})
+        if result[1] is True:
+            return Note.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_note_by_title(title: str) -> "Note":
@@ -138,8 +144,48 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"title": title})
-        return Note.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"title": title})
+        if result[1] is True:
+            return Note.format_object(result)
+        else:
+            return result[0]
+    
+    @staticmethod
+    async def add_note(title: str, text: str, fk_note_list: int) -> str:
+        """ # Add a note function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Add a note in the database table
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.add_note()
+
+        Parameters : 
+        ---
+            - title : :class:`str` => Title of the note
+            - text : :class:`str` => Text of the note
+            - fk_note_list : :class:`int` => Foreign key of notes list
+
+        Returns : 
+        ---
+            :class:`str` => Id of the note added
+        """
+        # Get the query string
+        fields = "(id_note, title, text, fk_noteList)"
+        params = "(%(id_note)s, %(title)s, %(text)s, %(fk_noteList)s)"
+        query = f"INSERT INTO {Note.TABLE} {fields} VALUES {params};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"id_note": None, "title": title, "text": text, "fk_noteList": fk_note_list})
+        if result[1] is True:
+           return f"The note has been successfully added !"
+        else:
+            return result[0]
     
     # FORMAT OBJECTS ----------------------------------------------------------------
 
@@ -173,13 +219,7 @@ class Note(Table):
             return None
         
         # Get the datas from the row
-        id = row[0] if row[0] is not None else None
-        title = row[1] if row[1] is not None else None
-        description = row[2] if row[2] is not None else None
-        fk_note_list = row[3] if row[3] is not None else None
-        
-        # Create a note object and return it
-        note = Note(id=id, title=title, description=description, fk_note_list=fk_note_list)
+        note = Note.create_object(row)
         return note
     
     @staticmethod
@@ -214,13 +254,33 @@ class Note(Table):
         # List all the servers
         notes = list
         for row in rows:
-            # Get the datas from the row
-            id = row[0] if row[0] is not None else None
-            title = row[1] if row[1] is not None else None
-            description = row[2] if row[2] is not None else None
-            fk_note_list = row[3] if row[3] is not None else None
-            
             # Create a note object and return it
-            note = Note(id=id, title=title, description=description, fk_note_list=fk_note_list)
+            note = Note.create_object(row)
             notes.append(note)
         return notes
+    
+    @staticmethod
+    def create_object(row: list) -> "Note":
+        """ # Create object function
+        @staticmethod
+        
+        Description :
+        ---
+            Create a :class:`Note` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.create_object()
+
+        Parameters : 
+        ---
+            - row : :class:`list` => Row of the result
+
+        Returns : 
+        ---
+            :class:`Note` => A Note object
+        """
+        # Create a note object and return it
+        note = Note(id=row[0], title=row[1], description=row[2], fk_note_list=row[3])
+        return note

@@ -24,7 +24,7 @@ class NoteList(Table):
 
     TABLE = "notelist"      # Name of the table
 
-    def __init__(self, id: int|None, name: str|None, fk_server: int|None):
+    def __init__(self, id: int, name: str, fk_server: int):
         """ # Class constructor of NoteList object 
         
         Description :
@@ -73,8 +73,11 @@ class NoteList(Table):
         query = f"SELECT * FROM {NoteList.TABLE};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return NoteList.format_list_object(cursor_result)
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return NoteList.format_list_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_note_list_by_id(id_note_list: int) -> "NoteList":
@@ -104,8 +107,11 @@ class NoteList(Table):
         query = f"SELECT * FROM {NoteList.TABLE} WHERE {where};"
         
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"id_noteList": id_note_list})
-        return NoteList.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"id_noteList": id_note_list})
+        if result[1] is True:
+            return NoteList.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_note_list_by_name(name: str) -> "NoteList":
@@ -135,8 +141,81 @@ class NoteList(Table):
         query = f"SELECT * FROM {NoteList.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"name": name})
-        return NoteList.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"name": name})
+        if result[1] is True:
+            return NoteList.format_object(result)
+        else:
+            return result[0]
+    
+    @staticmethod
+    async def get_note_list_id_by_name_and_fk_server(name: str, fk_server: int) -> int:
+        """ # Get a note list by name function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get one note list stored in the database table by its name
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.get_note_list_by_name()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Searched note list name
+
+        Returns : 
+        ---
+            :class:`int` => the note id
+        """
+        # Get the query string
+        where = "fk_server = %(fk_server)s AND name = %(name)s"
+        query = f"SELECT id_noteList FROM {NoteList.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"name": name, "fk_server": fk_server})
+        if result[1] is True:
+            return NoteList.get_one_row(result[0])[0]
+        else:
+            return result[0]
+        
+    @staticmethod
+    async def create_note_list(name: str, fk_server: int) -> str:
+        """ # Create a note list function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Create a note list in the database table
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.create_note_list()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Name of the note list
+            - fk_server : :class:`int` => Foreign key of the server id
+
+        Returns : 
+        ---
+            :class:`NoteList|None` => The note list which was created in database
+        """
+        # Get the query string
+        fields = "(id_notelist, name, fk_server)"
+        params = "(%(id_notelist)s, %(name)s, %(fk_server)s)"
+        query = f"INSERT INTO {NoteList.TABLE} {fields} VALUES {params};"
+
+        # If the server doesn't exists, insert it into the database
+        result = await Database.get_instance().bind_exec(query, {"id_notelist" : None, "name": name, "fk_server": fk_server})
+        if result[1] is True:
+            return f"The note list **'{name}'** has been successfully created"
+        else:
+            return result[0]
     
     # FORMAT OBJECTS ----------------------------------------------------------------
 
@@ -170,12 +249,7 @@ class NoteList(Table):
             return None
         
         # Get the datas from the row
-        id = row[0] if row[0] is not None else None
-        name = row[1] if row[1] is not None else None
-        fk_server = row[2] if row[2] is not None else None
-        
-        # Create a note object and return it
-        note_list = NoteList(id=id, name=name, fk_server=fk_server)
+        note_list = NoteList.create_object(row)
         return note_list
     
     @staticmethod
@@ -211,11 +285,32 @@ class NoteList(Table):
         note_lists = list
         for row in rows:
             # Get the datas from the row
-            id = row[0] if row[0] is not None else None
-            name = row[1] if row[1] is not None else None
-            fk_server = row[2] if row[2] is not None else None
-            
-            # Create a note object and return it
-            note_list = NoteList(id=id, name=name, fk_server=fk_server)
+            note_list = NoteList.create_object(row)
             note_lists.append(note_list)
         return note_lists
+    
+    @staticmethod
+    def create_object(row: list) -> "NoteList":
+        """ # Create object function
+        @staticmethod
+        
+        Description :
+        ---
+            Create a :class:`NoteList` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.create_object()
+
+        Parameters : 
+        ---
+            - row : :class:`list` => Row of the result
+
+        Returns : 
+        ---
+            :class:`NoteList` => A NoteList object
+        """
+        # Create a server object and return it
+        note_list = NoteList(id=row[0], name=row[1], fk_server=row[2])
+        return note_list

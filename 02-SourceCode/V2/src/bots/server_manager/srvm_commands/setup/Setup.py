@@ -68,7 +68,7 @@ class Setup(Command):
         ---
             :class:`None`
         """
-        Logger.log(LogDefinitions.INFO, f"Setup command called by {interaction.user.name}")
+        Logger.log(LogDefinitions.INFO, f"{__class__.__name__} command executed in guild {interaction.user.name}")
         message = await Server.create_server(guild_id=self.guild_id, name=self.name)
         await interaction.response.send_message(message, ephemeral=True)
 

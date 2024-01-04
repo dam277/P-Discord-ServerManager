@@ -66,7 +66,7 @@ class GetCommands(Command):
         ---
             :class:`None`
         """
-        Logger.log(LogDefinitions.INFO, f"DeleteFile command called by {interaction.user.name}")
+        Logger.log(LogDefinitions.INFO, f"{__class__.__name__} command executed in guild {interaction.user.name}")
 
         # Get the bot's commands
         self.embedMessage = nextcord.Embed(title="Bot commands", description="Here are all the commands of the bot that can be used!")

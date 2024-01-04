@@ -26,7 +26,7 @@ class Playlist(Table):
 
     TABLE = "playlist"      # Name of the table
 
-    def __init__(self, id: int|None, name: str|None, description: str|None, fk_file: int|None, fk_server: int|None):
+    def __init__(self, id: int, name: str, description: str, fk_file: int, fk_server: int):
         """ # Class constructor of Playlist object 
         
         Description :
@@ -79,8 +79,11 @@ class Playlist(Table):
         query = f"SELECT * FROM {Playlist.TABLE};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return Playlist.format_list_object(cursor_result)
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return Playlist.format_list_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_playlist_by_id(id_playlist: int) -> "Playlist":
@@ -103,15 +106,18 @@ class Playlist(Table):
 
         Returns : 
         ---
-            :class:`Playlist|None` => The Playlist which was got in database
+            :class:`Playlist` => The Playlist which was got in database
         """
         # Get the query string
         where = "id_playlist = %(id_playlist)s"
         query = f"SELECT * FROM {Playlist.TABLE} WHERE {where};"
         
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"id_playlist": id_playlist})
-        return Playlist.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"id_playlist": id_playlist})
+        if result[1] is True:
+            return Playlist.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_playlist_by_name(name: str) -> "Playlist":
@@ -141,8 +147,11 @@ class Playlist(Table):
         query = f"SELECT * FROM {Playlist.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"name": name})
-        return Playlist.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"name": name})
+        if result[1] is True:
+            return Playlist.format_object(result)
+        else:
+            return result[0]
     
     # FORMAT OBJECTS ----------------------------------------------------------------
 
@@ -176,7 +185,7 @@ class Playlist(Table):
             return None
         
         # Create a note object and return it
-        playlist = Playlist(id=row[0], name=row[1], description=row[2], fk_file=row[3], fk_server=row[4])
+        playlist = Playlist.create_object(row)
         return playlist
     
     @staticmethod
@@ -212,6 +221,32 @@ class Playlist(Table):
         playlists = list
         for row in rows:
             # Create a server object and add it to the servers list
-            playlist = Playlist(id=row[0], name=row[1], description=row[2], fk_file=row[3], fk_server=row[4])
+            playlist = Playlist.create_object(row)
             playlists.append(playlist)
         return playlists
+    
+    @staticmethod
+    def create_object(row: list) -> "Playlist":
+        """ # Create object function
+        @staticmethod
+        
+        Description :
+        ---
+            Create a :class:`Playlist` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.Playlist.py\n
+            Playlist.create_object()
+
+        Parameters : 
+        ---
+            - row : :class:`list` => Row of the result
+
+        Returns : 
+        ---
+            :class:`Playlist` => A Playlist object
+        """
+        # Get the datas from the row
+        playlist = Playlist(id=row[0], name=row[1], description=row[2], fk_file=row[3], fk_server=row[4])
+        return playlist

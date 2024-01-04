@@ -69,7 +69,7 @@ class DeleteFile(Command):
         Returns :
         ---
             :class:`None`"""
-        Logger.log(LogDefinitions.INFO, f"DeleteFile command called by {interaction.user.name}")
+        Logger.log(LogDefinitions.INFO, f"{__class__.__name__} command executed in guild {interaction.user.name}")
         file = await File.get_file_by_name_and_guild_id(self.file_name, self.guild_id)
         
         # Send confirmation message to discord

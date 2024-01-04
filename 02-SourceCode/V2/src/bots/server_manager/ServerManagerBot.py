@@ -8,6 +8,9 @@ from .srvm_commands.help.GetCommands import GetCommands
 from .srvm_commands.files.AddFile import AddFile
 from .srvm_commands.files.DeleteFile import DeleteFile 
 from .srvm_commands.files.GetFile import GetFile 
+from .srvm_commands.notes.CreateNoteList import CreateNoteList 
+from .srvm_commands.notes.AddNote import AddNote 
+
 from .srvm_autocompletes.files.FileAutocomplete import FileAutocomplete
 
 from ...utils.logger.Logger import Logger, LogDefinitions
@@ -80,6 +83,7 @@ class ServerManagerBot(Bot):
 
         @self.bot_instance.event
         async def on_message(message: nextcord.Message):
+            # Check if the message is a command or not and process it
             if message.content.startswith(self.bot_instance.command_prefix):
                 await self.bot_instance.process_commands(message)
             else:
@@ -155,6 +159,64 @@ class ServerManagerBot(Bot):
             self.bot_instance.commands
         #endregion ---- Setup command ------------------------
 
+        #region ---- Create commands ------------------------
+        @self.bot_instance.slash_command(name="create", description="Create something (this is a parent command, you need to use a proposed subcommand)")
+        async def create(interaction: nextcord.Interaction):
+            """ # Bot create command
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Create something to the server\n
+                This command is a parent command for the subcommands
+
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(create())
+
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+
+            Returns : 
+            ---
+                :class:`None`
+            """
+            pass
+        
+        #region ---- subcommands ------------------------
+        # ---- Create NoteList command ------------------------
+        @create.subcommand(name="notelist", description="Create a notelist")
+        async def create_notelist(interaction: nextcord.Interaction, name: str):
+            """ # Bot create notelist subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Create a notelist to the server\n
+                This command is a subcommand of the create command
+
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(create_notelist())
+
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - name : :class:`str` => Name of the notelist to create
+
+            Returns : 
+            ---
+                :class:`None`
+            """
+            command = CreateNoteList(name, interaction.guild.id)
+            await command.execute(interaction)
+
+        #endregion ----------------------------
+        #endregion ----------------------------
+
         #region ---- Get commands ------------------------
         @self.bot_instance.slash_command(name="get", description="Get something (this is a parent command, you need to use a proposed subcommand)")
         async def get(interaction: nextcord.Interaction):
@@ -209,6 +271,7 @@ class ServerManagerBot(Bot):
             command = GetCommands(slash_commands=self.bot_instance.get_all_application_commands(), regular_commands=self.bot_instance.commands)
             await command.execute(interaction)
         
+        # ---- Get file command ------------------------
         @get.subcommand(name="file", description="Get a file from the server")
         async def get_file(interaction: nextcord.Interaction, file_name: str):
             """ Bot get file subcommand
@@ -291,6 +354,34 @@ class ServerManagerBot(Bot):
                 :class:`None`
             """
             command = AddFile(interaction.guild.id, file)
+            await command.execute(interaction)
+        #endregion ----------------------------
+            
+        #region ---- Add note command ------------------------
+        @add.subcommand(name="note", description="Add a note to a notelist")
+        async def add_note(interaction: nextcord.Interaction, title: str, text: str, note_list_name: str):
+            """ Bot add note subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Add a note to a notelist\n
+                This command is a subcommand of the add command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(add_note())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = AddNote(title, text, note_list_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ----------------------------
         #endregion ----------------------------

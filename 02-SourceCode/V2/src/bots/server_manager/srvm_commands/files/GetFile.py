@@ -68,7 +68,7 @@ class GetFile(Command):
         Returns :
         ---
             :class:`None`"""
-        Logger.log(LogDefinitions.INFO, f"GetFile command called by {interaction.user.name}")
+        Logger.log(LogDefinitions.INFO, f"{__class__.__name__} command executed in guild {interaction.user.name}")
         file = await File.get_file_by_name_and_guild_id(self.file_name, self.guild_id)
         
         # Check if the file exists in database, if not, send error message to discord as reply

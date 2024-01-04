@@ -1,3 +1,4 @@
+from typing import Any
 from mysql.connector.cursor import MySQLCursor
 from ...Database import Database
 from ..Table import Table
@@ -25,7 +26,7 @@ class File(Table):
 
     TABLE = "file"          # Database table name
 
-    def __init__(self, id: int|None, name: str|None, path: str|None, fk_server: int|None):
+    def __init__(self, id: int, name: str, path: str, fk_server: int):
         """ # Class constructor of File object 
         
         Description :
@@ -76,8 +77,11 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return File.format_list_object(cursor_result)
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return File.format_list_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_last_file_id() -> "File":
@@ -102,8 +106,11 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE id_file = (SELECT MAX(id_file) FROM file)"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return File.format_object(cursor_result).id
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return File.format_object(result).id
+        else:
+            return result[0]
     
     @staticmethod
     async def get_file_by_id(id_file: int) -> "File":
@@ -133,8 +140,11 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
         
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"id_file": id_file})
-        return File.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"id_file": id_file})
+        if result[1] is True:
+            return File.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_file_by_name(name: str) -> "File":
@@ -164,8 +174,11 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"name": name})
-        return File.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"name": name})
+        if result[1] is True:
+            return File.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_file_by_name_and_guild_id(name: str, guild_id: int) -> "File":
@@ -196,8 +209,11 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"name": name, "guild_id": guild_id})
-        return File.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"name": name, "guild_id": guild_id})
+        if result[1] is True:
+            return File.format_object(result)
+        else:
+            return result[0]
 
     @staticmethod
     async def add_file(name: str, path: str, fk_server: int) -> str:
@@ -237,12 +253,9 @@ class File(Table):
         # If the server doesn't exists, insert it into the database
         result = await Database.get_instance().bind_exec(query, {"id_file" : None, "name": name, "path": path, "fk_server": fk_server})
         if result[1] is True:
-            message = f"The file **'{name}'** has been successfully added to the database"
+            return f"The file **'{name}'** has been successfully added to the database"
         else:
-            message = result
-
-        # Return the message to the user
-        return message
+            return result
         
     @staticmethod
     async def get_file_by_path(path: str) -> "File":
@@ -272,8 +285,11 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"path": path})
-        return File.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"path": path})
+        if result[1] is True:
+            return File.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_files_by_server_id(id_server: int) -> list["File"]:
@@ -302,14 +318,19 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"fk_server": id_server})
-        return File.format_list_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"fk_server": id_server})
+        if result[1] is True:
+            return File.format_list_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def delete_file_by_id(id_file: int) -> str:
         """ # Delete file by id function
         /!\\ This is a coroutine, it needs to be awaited
         
+        @staticmethod
+
         Description :
         ---
             Delete a file by its id
@@ -334,12 +355,9 @@ class File(Table):
         # Get the result by executing query into the database
         result = await Database.get_instance().bind_exec(query, {"id_file": id_file})
         if result[1] is True:
-            message = f"The file **'[file_name]'** has been successfully deleted from the database"
+            return f"The file **'[file_name]'** has been successfully deleted from the database"
         else:
-            message = result[0]
-
-        # Return the message to the user
-        return message
+            return result[0]
 
     # FORMAT OBJECTS ----------------------------------------------------------------
 
@@ -373,13 +391,7 @@ class File(Table):
             return None
         
         # Get the datas from the row
-        id = row[0] if row[0] is not None else None
-        name = row[1] if row[1] is not None else None
-        path = row[2] if row[2] is not None else None
-        fk_server = row[3] if row[3] is not None else None
-        
-        # Create a file object and return it
-        file = File(id=id, name=name, path=path, fk_server=fk_server)
+        file = File.create_object(row)
         return file
     
     @staticmethod
@@ -414,14 +426,34 @@ class File(Table):
         # List all the files
         files = []
         for row in rows:
-            # Get the datas from the row
-            id = row[0] if row[0] is not None else None
-            name = row[1] if row[1] is not None else None
-            path = row[2] if row[2] is not None else None
-            fk_server = row[3] if row[3] is not None else None
-            
             # Create a file object and return it
-            file = File(id=id, name=name, path=path, fk_server=fk_server)
+            file = File.create_object(row)
             files.append(file)
 
         return files
+    
+    @staticmethod
+    def create_object(row: list) -> "File":
+        """ # Create object function
+        @staticmethod
+        
+        Description :
+        ---
+            Create a :class:`File` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.File.py\n
+            File.create_object()
+
+        Parameters : 
+        ---
+            - row : :class:`list` => Row of the result
+
+        Returns : 
+        ---
+            :class:`File` => A File object
+        """
+        # Create a file object and return it
+        file = File(id=row[0], name=row[1], path=row[2], fk_server=row[3])
+        return file

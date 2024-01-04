@@ -24,7 +24,7 @@ class Server(Table):
 
     TABLE = "server"        # Name of the server table
 
-    def __init__(self, id: int|None, guild_id: int|None, name: str|None):
+    def __init__(self, id: int, guild_id: int, name: str):
         """ # Class constructor of Server object 
         
         Description :
@@ -73,8 +73,11 @@ class Server(Table):
         query = f"SELECT * FROM {Server.TABLE};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().simple_exec(query)
-        return Server.format_list_object(cursor_result)
+        result = await Database.get_instance().simple_exec(query)
+        if result[1] is True:
+            return Server.format_list_object(result)
+        else:
+            return result[0]
 
     @staticmethod
     async def create_server(guild_id: int, name: str) -> str:
@@ -113,12 +116,9 @@ class Server(Table):
         # If the server doesn't exists, insert it into the database
         result = await Database.get_instance().bind_exec(query, {"id_server" : None, "guildId": guild_id, "name": name})
         if result[1] is True:
-            message = "Server successfully created !"
+            return "Server successfully created !"
         else:
-            message = result
-
-        # Return the message to the user
-        return message
+            return result[0]
     
     @staticmethod
     async def get_server_by_guild_id(guild_id: int) -> "Server":
@@ -148,8 +148,11 @@ class Server(Table):
         query = f"SELECT * FROM {Server.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"guildId": guild_id})
-        return Server.format_object(cursor_result)
+        result = await Database.get_instance().bind_exec(query, {"guildId": guild_id})
+        if result[1] is True:
+            return Server.format_object(result)
+        else:
+            return result[0]
     
     @staticmethod
     async def get_server_id_by_guild_id(guild_id: int) -> int:
@@ -176,16 +179,19 @@ class Server(Table):
         """
         # Get the query string
         where = "guildId = %(guildId)s"
-        query = f"SELECT * FROM {Server.TABLE} WHERE {where};"
+        query = f"SELECT id_server FROM {Server.TABLE} WHERE {where};"
 
         # Get the result by executing query into the database
-        cursor_result = await Database.get_instance().bind_exec(query, {"guildId": guild_id})
-        return Server.format_object(cursor_result).id
+        result = await Database.get_instance().bind_exec(query, {"guildId": guild_id})
+        if result[1] is True:
+            return Server.get_one_row(result[0])[0]
+        else:
+            return result[0]
     
     # FORMAT OBJECTS ----------------------------------------------------------------
 
     @staticmethod
-    def format_object(cursor_result: MySQLCursor):
+    def format_object(cursor_result: MySQLCursor) -> "Server":
         """ # Format object function
         @staticmethod
         
@@ -213,17 +219,12 @@ class Server(Table):
         if row is None or len(row) < 1:
             return None
         
-        # Get the datas from the row
-        id = row[0] if row[0] is not None else None
-        guild_id = row[1] if row[1] is not None else None
-        name = row[2] if row[2] is not None else None
-        
         # Create a server object and return it
-        server = Server(id=id, guild_id=guild_id, name=name)
+        server = Server.create_object(row)
         return server
     
     @staticmethod
-    def format_list_object(cursor_result: MySQLCursor) -> list:
+    def format_list_object(cursor_result: MySQLCursor) -> list["Server"]:
         """ # Format list object function
         @staticmethod
         
@@ -254,13 +255,34 @@ class Server(Table):
         # List all the servers
         servers = list
         for row in rows:
-            # Get the datas from the row
-            id = row[0] if row[0] is not None else None
-            guild_id = row[1] if row[1] is not None else None
-            name = row[2] if row[2] is not None else None
-
             # Create a server object and add it to the servers list
-            server = Server(id=id, guild_id=guild_id, name=name)
+            server = Server.create_object(row)
             servers.append(server)
         return servers
+    
+    @staticmethod
+    def create_object(row: list) -> "Server":
+        """ # Create object function
+        @staticmethod
+        
+        Description :
+        ---
+            Create a :class:`Server` object by recieving a database cursor execution result
+        
+        Access : 
+        ---
+            src.database.models.tables.Server.py\n
+            Server.create_object()
+
+        Parameters : 
+        ---
+            - row : :class:`list` => Row of the result
+
+        Returns : 
+        ---
+            :class:`Server` => A Server object
+        """
+        # Create a server object and return it
+        server = Server(id=row[0], guild_id=row[1], name=row[2])
+        return server
     
