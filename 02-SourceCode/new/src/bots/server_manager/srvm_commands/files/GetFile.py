@@ -4,7 +4,6 @@ import os
 
 from ...._commands.Command import Command
 
-from .....database.models.tables.Server import Server
 from .....database.models.tables.File import File
 
 from .....utils.logger.Logger import Logger, LogDefinitions
@@ -25,7 +24,7 @@ class GetFile(Command):
     ---
         - Command : :class:`Command` => Parent class of database commands
     """
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str, guild_id: int):
         """ # GetFile command constructor
         
         Description :
@@ -45,6 +44,7 @@ class GetFile(Command):
         ---
             :class:`None`"""
         self.file_name = file_name
+        self.guild_id = guild_id
 
         super().__init__()
     
@@ -69,7 +69,7 @@ class GetFile(Command):
         ---
             :class:`None`"""
         Logger.log(LogDefinitions.INFO, f"GetFile command called by {interaction.user.name}")
-        file = await File.get_file_by_name(self.file_name)
+        file = await File.get_file_by_name_and_guild_id(self.file_name, self.guild_id)
         
         # Check if the file exists in database, if not, send error message to discord as reply
         if file is None:

@@ -233,7 +233,7 @@ class ServerManagerBot(Bot):
             ---
                 :class:`None`
             """
-            command = GetFile(interaction.guild.id, file_name)
+            command = GetFile(file_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ----------------------------
         #endregion ----------------------------

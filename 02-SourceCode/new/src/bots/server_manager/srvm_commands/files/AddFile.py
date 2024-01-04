@@ -1,5 +1,4 @@
 import nextcord
-from nextcord.ext import commands
 import os
 
 from ...._views.ConfirmationView import ConfirmationView
