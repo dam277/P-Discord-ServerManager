@@ -54,7 +54,7 @@ class File(Table):
         self.fk_server = fk_server
 
     @staticmethod
-    async def get_all_files():
+    async def get_all_files() -> list["File"]:
         """ # Get all file function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -80,7 +80,7 @@ class File(Table):
         return File.format_list_object(cursor_result)
     
     @staticmethod
-    async def get_last_file_id():
+    async def get_last_file_id() -> "File":
         """ # Get the last file id function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -106,7 +106,7 @@ class File(Table):
         return File.format_object(cursor_result).id
     
     @staticmethod
-    async def get_file_by_id(id_file: int):
+    async def get_file_by_id(id_file: int) -> "File":
         """ # Get a file by id function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -137,7 +137,7 @@ class File(Table):
         return File.format_object(cursor_result)
     
     @staticmethod
-    async def get_file_by_name(name: str):
+    async def get_file_by_name(name: str) -> "File":
         """ # Get a file by name function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -166,7 +166,38 @@ class File(Table):
         # Get the result by executing query into the database
         cursor_result = await Database.get_instance().bind_exec(query, {"name": name})
         return File.format_object(cursor_result)
+    
+    @staticmethod
+    async def get_file_by_name_and_guild_id(name: str, guild_id: int) -> "File":
+        """ # Get a file by name and guild id function
+        /!\\ This is a coroutine, it needs to be awaited
 
+        Description :
+        ---
+            Get one file stored in the database table by its name and guild id
+        
+        Access :
+        ---
+            src.database.models.tables.File.py\n
+            File.get_file_by_name_and_guild_id()
+
+        Parameters :
+        ---
+            - name : :class:`str` => Searched file name
+            - guild_id : :class:`int` => Searched guild id
+
+        Returns :
+        ---
+            :class:`File|None` => The file which was got in database
+        """
+        # Get the query string
+        inner_select_guild_id = "SELECT id_server FROM server WHERE guildID = %(guild_id)s"
+        where = f"fk_server = ({inner_select_guild_id}) AND name = %(name)s"
+        query = f"SELECT * FROM {File.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        cursor_result = await Database.get_instance().bind_exec(query, {"name": name, "guild_id": guild_id})
+        return File.format_object(cursor_result)
 
     @staticmethod
     async def add_file(name: str, path: str, fk_server: int) -> str:
@@ -214,7 +245,7 @@ class File(Table):
         return message
         
     @staticmethod
-    async def get_file_by_path(path: str):
+    async def get_file_by_path(path: str) -> "File":
         """ # Get file by path function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -245,7 +276,7 @@ class File(Table):
         return File.format_object(cursor_result)
     
     @staticmethod
-    async def get_files_by_server_id(id_server: int):
+    async def get_files_by_server_id(id_server: int) -> list["File"]:
         """ # Get file by server id function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -272,13 +303,48 @@ class File(Table):
 
         # Get the result by executing query into the database
         cursor_result = await Database.get_instance().bind_exec(query, {"fk_server": id_server})
-        
         return File.format_list_object(cursor_result)
+    
+    @staticmethod
+    async def delete_file_by_id(id_file: int) -> str:
+        """ # Delete file by id function
+        /!\\ This is a coroutine, it needs to be awaited
+        
+        Description :
+        ---
+            Delete a file by its id
+            
+        Access :
+        ---
+            src.database.models.tables.File.py\n
+            File.delete_file_by_id()
+        
+        Parameters :
+        ---
+            - id_file : :class:`int` => Searched file id
+        
+        Returns :
+        ---
+            :class:`str` => The message which will be sent to the user
+        """
+        # Get the query string
+        where = "id_file = %(id_file)s"
+        query = f"DELETE FROM {File.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"id_file": id_file})
+        if result[1] is True:
+            message = f"The file **'[file_name]'** has been successfully deleted from the database"
+        else:
+            message = result[0]
+
+        # Return the message to the user
+        return message
 
     # FORMAT OBJECTS ----------------------------------------------------------------
 
     @staticmethod
-    def format_object(cursor_result: MySQLCursor):
+    def format_object(cursor_result: MySQLCursor) -> "File":
         """ # Format object function
         @staticmethod
         
@@ -300,18 +366,24 @@ class File(Table):
             :class:`File|None` => A file object
         """
         # Getting datas from result
-        row = Table.get_one_row(cursor_result[0])
+        row = File.get_one_row(cursor_result[0])
 
         # Check if datas are filled
         if row is None or len(row) < 1:
             return None
         
+        # Get the datas from the row
+        id = row[0] if row[0] is not None else None
+        name = row[1] if row[1] is not None else None
+        path = row[2] if row[2] is not None else None
+        fk_server = row[3] if row[3] is not None else None
+        
         # Create a file object and return it
-        file = File(id=row[0], name=row[1], path=row[2], fk_server=row[3])
+        file = File(id=id, name=name, path=path, fk_server=fk_server)
         return file
     
     @staticmethod
-    def format_list_object(cursor_result: MySQLCursor) -> list:
+    def format_list_object(cursor_result: MySQLCursor) -> list["File"]:
         """ # Format list object function
         @staticmethod
         
@@ -333,7 +405,7 @@ class File(Table):
             :class:`list[File]|None` => A list of file object
         """
         # Getting datas from result
-        rows = Table.get_all_rows(cursor_result[0])
+        rows = File.get_all_rows(cursor_result[0])
         
         # Check if datas are filled
         if len(rows) < 1:
@@ -342,8 +414,14 @@ class File(Table):
         # List all the files
         files = []
         for row in rows:
-            # Create a file object and add it to the files list
-            file = File(id=row[0], name=row[1], path=row[2], fk_server=row[3])
+            # Get the datas from the row
+            id = row[0] if row[0] is not None else None
+            name = row[1] if row[1] is not None else None
+            path = row[2] if row[2] is not None else None
+            fk_server = row[3] if row[3] is not None else None
+            
+            # Create a file object and return it
+            file = File(id=id, name=name, path=path, fk_server=fk_server)
             files.append(file)
 
         return files
