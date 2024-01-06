@@ -4,6 +4,8 @@ import nextcord
 
 from ...utils.enums.FileTypes import FileTypes
 
+from ...database.models.Table import Table
+
 class Command(ABC):
     """ # Command class
         
@@ -92,3 +94,35 @@ class Command(ABC):
             self.file_type = FileTypes.MUSIC
         else:
             self.file_type = FileTypes.DEFAULT
+
+    async def check_object_type(self, object: Table, type: type, name: str, interaction: nextcord.Interaction, search: bool = True) -> bool:
+        """ # Check object type function
+        
+        Description :
+        ---
+            Check if the object is of the type
+
+        Access : 
+        ---
+            src.bots.commands.Command.py\n
+            Command.check_object_type()
+
+        Parameters :
+        ---
+            object : :class:`Table` => Object to check
+            type : :class:`type` => Type to check
+
+        Returns : 
+        ---
+            :class:`bool`
+        """
+                # Check if note list exists
+        if not isinstance(object, type):
+            if not search:
+                return False
+            if object is None:
+                await interaction.send(f"Element **{name}** not found")
+                return False
+            await interaction.send(object)
+            return False
+        return True

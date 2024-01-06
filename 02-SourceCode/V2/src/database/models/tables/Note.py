@@ -187,6 +187,39 @@ class Note(Table):
         else:
             return result[0]
     
+    @staticmethod
+    async def get_notes_by_note_list_id(note_list_id: int) -> list["Note"]:
+        """ # Get notes by note list id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get all notes stored in the database table by the note list id
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.get_notes_by_note_list_id()
+
+        Parameters : 
+        ---
+            - note_list_id : :class:`int` => Note list id
+
+        Returns : 
+        ---
+            :class:`list[Note]|None` => List of notes
+        """
+        # Get the query string
+        where = "fk_noteList = %(fk_noteList)s"
+        query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"fk_noteList": note_list_id})
+        if result[1] is True:
+            return Note.format_list_object(result)
+        else:
+            return result[0]
     # FORMAT OBJECTS ----------------------------------------------------------------
 
     @staticmethod
@@ -252,7 +285,7 @@ class Note(Table):
             return None
         
         # List all the servers
-        notes = list
+        notes = []
         for row in rows:
             # Create a note object and return it
             note = Note.create_object(row)
@@ -282,5 +315,5 @@ class Note(Table):
             :class:`Note` => A Note object
         """
         # Create a note object and return it
-        note = Note(id=row[0], title=row[1], description=row[2], fk_note_list=row[3])
+        note = Note(id=row[0], title=row[1], text=row[2], fk_note_list=row[3])
         return note

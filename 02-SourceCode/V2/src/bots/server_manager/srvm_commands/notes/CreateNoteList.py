@@ -78,6 +78,13 @@ class CreateNoteList(Command):
             Logger.log(LogDefinitions.WARNING, f"Server {self.guild_id} does not exists in database")
             return
         
+        # Check if the note list already exists
+        note_list = await NoteList.get_note_list_by_name_and_fk_server(self.name, server_id)
+        if await self.check_object_type(note_list, NoteList, self.name, interaction, False):
+            await interaction.send(f"This note list name **'{self.name}'** already exists")
+            Logger.log(LogDefinitions.WARNING, f"Note list {self.name} already exists in server {self.guild_id}")
+            return
+        
         # Create the note list
         message = await NoteList.create_note_list(self.name, server_id)
 

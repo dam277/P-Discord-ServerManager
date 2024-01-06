@@ -72,8 +72,7 @@ class GetFile(Command):
         file = await File.get_file_by_name_and_guild_id(self.file_name, self.guild_id)
         
         # Check if the file exists in database, if not, send error message to discord as reply
-        if file is None:
-            await interaction.send(f"The file **'{self.file_name}'** does not exists in database !")
+        if not await self.check_object_type(file, File, self.file_name, interaction): 
             return
 
         # Check if the path exists, if not, send error message to discord as reply

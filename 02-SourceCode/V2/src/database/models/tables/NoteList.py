@@ -149,7 +149,7 @@ class NoteList(Table):
     
     @staticmethod
     async def get_note_list_id_by_name_and_fk_server(name: str, fk_server: int) -> int:
-        """ # Get a note list by name function
+        """ # Get a note list id by name and fk server function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
         
@@ -178,6 +178,73 @@ class NoteList(Table):
         result = await Database.get_instance().bind_exec(query, {"name": name, "fk_server": fk_server})
         if result[1] is True:
             return NoteList.get_one_row(result[0])[0]
+        else:
+            return result[0]
+        
+    @staticmethod
+    async def get_note_list_by_name_and_fk_server(name: str, fk_server: int) -> "NoteList":
+        """ # Get a note list by name and fk server function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get one note list stored in the database table by its name
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.get_note_list_by_name()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Searched note list name
+
+        Returns : 
+        ---
+            :class:`int` => the note id
+        """
+        # Get the query string
+        where = "fk_server = %(fk_server)s AND name = %(name)s"
+        query = f"SELECT * FROM {NoteList.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"name": name, "fk_server": fk_server})
+        if result[1] is True:
+            return NoteList.format_object(result)
+        else:
+            return result[0]
+        
+    @staticmethod
+    async def get_notelists_by_server_id(id_server: int) -> list["NoteList"]:
+        """ # Get Notelist by server id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get a list of Notelists using the server id
+        
+        Access : 
+        ---
+            src.database.models.tables.Notelist.py\n
+            Notelist.get_Notelists_by_server_id()
+
+        Parameters : 
+        ---
+            - id_server : :class:`int` => Searched server id
+
+        Returns : 
+        ---
+            :class:`list[Notelist]` => A list of Notelists got
+        """
+        where = "fk_server = %(fk_server)s"
+        query = f"SELECT * FROM {NoteList.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"fk_server": id_server})
+        if result[1] is True:
+            return NoteList.format_list_object(result)
         else:
             return result[0]
         
@@ -282,7 +349,7 @@ class NoteList(Table):
             return None
         
         # List all the servers
-        note_lists = list
+        note_lists = []
         for row in rows:
             # Get the datas from the row
             note_list = NoteList.create_object(row)

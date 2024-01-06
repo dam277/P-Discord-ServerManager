@@ -77,10 +77,10 @@ class AddNote(Command):
         Logger.log(LogDefinitions.INFO, f"{__class__.__name__} command called by {interaction.user.name}")
         
         # Get the server
-        server = await Server.get_server_by_guild_id(self.guild_id)
+        id_server = await Server.get_server_id_by_guild_id(self.guild_id)
 
         # Get the note list
-        note_list_id = await NoteList.get_note_list_id_by_name_and_fk_server(self.note_list_name, server.id)
+        note_list_id = await NoteList.get_note_list_id_by_name_and_fk_server(self.note_list_name, id_server)
 
         # Add the note to the notelist
         message = await Note.add_note(self.title, self.text, note_list_id)

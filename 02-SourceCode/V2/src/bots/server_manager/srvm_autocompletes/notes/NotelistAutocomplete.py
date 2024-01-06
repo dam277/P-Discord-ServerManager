@@ -4,34 +4,34 @@ import os
 from ...._autocompletes.Autocomplete import Autocomplete
 
 from .....database.models.tables.Server import Server
-from .....database.models.tables.File import File
+from .....database.models.tables.NoteList import NoteList
 
-class FileAutocomplete(Autocomplete):
-    """ # FileAutocomplete autocomplete class
+class NotelistAutocomplete(Autocomplete):
+    """ # NotelistAutocomplete autocomplete class
     
     Description :
     ---
-        Manage the FileAutocomplete discord autocomplete
+        Manage the NotelistAutocomplete discord autocomplete
         
     Access :
     ---
-        src.bots.server_manager.srvm_autocomplete.files.AutocompleteFile.py\n
-        AutocompleteFile
+        src.bots.server_manager.srvm_autocompletes.notes.NotelistAutocomplete.py\n
+        NotelistAutocomplete
         
     inheritance :
     ---
         - autocomplete : :class:`autocomplete` => Parent class of database autocompletes"""
     def __init__(self, current: str, guild_id: int):
-        """ # FileAutocomplete autocomplete constructor
+        """ # NotelistAutocomplete autocomplete constructor
         
         Description :
         ---
-            Construct a FileAutocomplete autocomplete object
+            Construct a NotelistAutocomplete autocomplete object
             
         Access :
         ---
-            src.bots.server_manager.srvm_autocomplete.files.AutocompleteFile.py\n
-            AutocompleteFile.__init__()
+            src.bots.server_manager.srvm_autocompletes.notes.NotelistAutocomplete.py\n
+            NotelistAutocomplete.__init__()
         
         Parameters :
         ---
@@ -56,26 +56,28 @@ class FileAutocomplete(Autocomplete):
             
         Access :
         ---
-            src.bots.server_manager.srvm_autocomplete.files.AutocompleteFile.py\n
-            AutocompleteFile.execute()
-            
+            src.bots.server_manager.srvm_autocompletes.notes.NotelistAutocomplete.py\n
+            NotelistAutocomplete.execute()
+        
         Parameters :
         ---
-            - interaction : :class:`nextcord.Interaction` => Interaction within the user and the autocomplete
-        
+            - interaction : :class:`nextcord.Interaction` => Discord interaction with the user
+            
         Returns :
         ---
             :class:`None`
         """
         # Get the server id
-        server_id = await Server.get_server_id_by_guild_id(self.guild_id)
+        id_server = await Server.get_server_id_by_guild_id(self.guild_id)
 
-        # Get and Filter the files by checking the name of the file and make that the result max length is 25
-        files = await File.get_files_by_server_id(server_id)
-        if files:
-            files = [f.name for f in files if self.current.lower() in f.name.lower()][:25]
+        # Get the notelists
+        notelists = await NoteList.get_notelists_by_server_id(id_server)
+        print(notelists)
+
+        if notelists:
+            notelists = [notelist.name for notelist in notelists if self.current.lower() in notelist.name.lower()][:25]
         else:
-            files = []
-            
+            notelists = []
+
         # Send the autocomplete response
-        await interaction.response.send_autocomplete(files)
+        await interaction.response.send_autocomplete(notelists)

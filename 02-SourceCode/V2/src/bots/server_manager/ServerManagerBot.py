@@ -9,9 +9,11 @@ from .srvm_commands.files.AddFile import AddFile
 from .srvm_commands.files.DeleteFile import DeleteFile 
 from .srvm_commands.files.GetFile import GetFile 
 from .srvm_commands.notes.CreateNoteList import CreateNoteList 
+from .srvm_commands.notes.GetNoteList import GetNoteList 
 from .srvm_commands.notes.AddNote import AddNote 
 
 from .srvm_autocompletes.files.FileAutocomplete import FileAutocomplete
+from .srvm_autocompletes.notes.NotelistAutocomplete import NotelistAutocomplete
 
 from ...utils.logger.Logger import Logger, LogDefinitions
 
@@ -298,6 +300,34 @@ class ServerManagerBot(Bot):
             """
             command = GetFile(file_name, interaction.guild.id)
             await command.execute(interaction)
+        
+        # ---- Get note list command ------------------------
+        @get.subcommand(name="notelist", description="Get a notelist")
+        async def get_notelist(interaction: nextcord.Interaction, name: str):
+            """ Bot get notelist subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Get a notelist to the server\n
+                This command is a subcommand of the get command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(get_notelist())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - name : :class:`str` => Name of the notelist to get
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = GetNoteList(name, interaction.guild.id)
+            await command.execute(interaction)
         #endregion ----------------------------
         #endregion ----------------------------
             
@@ -465,5 +495,30 @@ class ServerManagerBot(Bot):
                 :class:`None`
             """
             autocomplete = FileAutocomplete(file_name, interaction.guild.id)
+            return await autocomplete.execute(interaction)
+        
+        # Create autocomplete function for notes and notelists subcommands
+        @get_notelist.on_autocomplete("name")
+        @add_note.on_autocomplete("note_list_name")
+        async def notelist_autocomplete(interaction: nextcord.Interaction, name: str):
+            """ Bot note autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the notes and notelists subcommands
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands_note_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = NotelistAutocomplete(name, interaction.guild.id)
             return await autocomplete.execute(interaction)
         #endregion ==========================================================================================================================
