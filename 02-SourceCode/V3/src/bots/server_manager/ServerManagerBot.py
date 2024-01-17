@@ -195,6 +195,35 @@ class ServerManagerBot(Bot):
             command = Commands.setup.value(interaction.guild_id, interaction.guild.name)
             await execute(interaction=interaction, command=command)
         #endregion ---- Setup command ------------------------
+            
+        #region ---- Help command ------------------------
+        @self.bot_instance.slash_command(name="help", description="Get the list of commands")
+        async def help(interaction: nextcord.Interaction):
+            """ # Bot help command
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Get the list of commands\n
+                This use :class:`GetCommands` class to execute this command
+
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(help())
+            
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+
+            Returns : 
+            ---
+                :class:`None`
+            """
+            command = Commands.help.value()
+            await execute(interaction=interaction, command=command)
+        #endregion ---- Help command ------------------------
+        
 #region temp imports
 # from .srvm_commands.setup.Setup import Setup
 # from .srvm_commands.help.GetCommands import GetCommands

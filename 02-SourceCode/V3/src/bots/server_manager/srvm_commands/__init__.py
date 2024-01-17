@@ -1,1 +1,2 @@
-from .setup.Setup import Setup
+from .help.Setup import Setup
+from .help.Help import Help

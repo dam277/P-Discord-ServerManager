@@ -1,6 +1,9 @@
 from ..Base import Base
 import nextcord
 
+from colorama import Fore
+import copy
+
 from ...utils.enums.permissions.DiscordPermissions import DiscordPermissions
 from ...utils.enums.permissions.CheckType import CheckType
 
@@ -120,16 +123,19 @@ class Command(Base):
         # Check if the command name and description are valid
         if not name or not description:
             Logger.log(LogDefinitions.ERROR ,f"Invalid command name or description")
-            
-        # Register the command
-        command = {"name": name, "description": description, "parent": parent, "params": params}
-        Command.commands.append(command)
-
-        # Check if the command has been successfully registered 
-        if not command in Command.commands:
-            Logger.log(LogDefinitions.ERROR ,f"Error while registering command: '{name}'")
-        Logger.log(LogDefinitions.SUCCESS ,f"Command registered as: '{name}' with params : {params}")
         
+        # Check if the command has already been registered
+        if not Command.get_command(name):
+            # Register the command
+            command = {"name": name, "description": description, "parent": parent, "params": params}
+            Command.commands.append(command)
+
+            # Check if the command has been successfully registered 
+            if not command in Command.commands:
+                Logger.log(LogDefinitions.ERROR ,f"Error while registering command: '{name}'")
+            Logger.log(LogDefinitions.SUCCESS ,f"Command registered as: '{name}' with params : {params}")
+        else:
+            Logger.log(LogDefinitions.ERROR ,f"Command already registered: '{name}'")
         # Decorator function
         def decorator(func):
             # Wrapper function
@@ -212,9 +218,9 @@ class Command(Base):
         ---
             :class:`Command` => Command with the parent sended
         """
-        # Get all the top and children commands
-        top_commands = [command for command in Command.commands if not command.get("parent")]
-        children_commands = [command for command in Command.commands if command.get("parent")]
+        # Get all the top and children commands        
+        top_commands = copy.deepcopy([command for command in Command.commands if not command.get("parent")])
+        children_commands = copy.deepcopy([command for command in Command.commands if command.get("parent")])
 
         # Get children function with recursivity
         def get_children(command: dict):
@@ -255,9 +261,9 @@ class Command(Base):
             return command
         
         # Get all the commands with their children
-        commands = []
+        discord_commands = []
         for command in top_commands:
-            commands.append(get_children(command))
-
+            discord_commands.append(get_children(command))
+        
         # Return the commands
-        return commands
+        return discord_commands
