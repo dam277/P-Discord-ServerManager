@@ -183,11 +183,12 @@ class Server(Table):
 
         # Get the result by executing query into the database
         result = await Database.get_instance().bind_exec(query, {"guildId": guild_id})
-        if result[1] is True:
-            return Server.get_one_row(result[0])[0]
+        row = Server.get_one_row(result[0])
+        if result[1] is True and row:
+            return row[0]
         else:
             return result[0]
-    
+        
     # FORMAT OBJECTS ----------------------------------------------------------------
 
     @staticmethod

@@ -72,8 +72,8 @@ class NotelistAutocomplete(Autocomplete):
 
         # Get the notelists
         notelists = await NoteList.get_notelists_by_server_id(id_server)
-        print(notelists)
 
+        # Filter the notelists
         if notelists:
             notelists = [notelist.name for notelist in notelists if self.current.lower() in notelist.name.lower()][:25]
         else:

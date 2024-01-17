@@ -2,7 +2,7 @@ import nextcord
 from nextcord.ext import commands
 import os
 
-from ...._views.ConfirmationView import ConfirmationView
+from ....server_manager.srvm_views.ConfirmationView import ConfirmationView
 from ...._commands.Command import Command
 
 from .....database.models.tables.Server import Server

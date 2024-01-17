@@ -6,7 +6,7 @@ from .....database.models.tables.NoteList import NoteList
 from .....database.models.tables.Server import Server
 from .....database.models.tables.Note import Note
 
-from ...._views.PageView import PageView
+from ....server_manager.srvm_views.PageView import PageView
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 
@@ -109,4 +109,3 @@ class GetNoteList(Command):
 
         # Send the embed
         await interaction.send(embed=note_list_embed, view=page_view)
-        page_view.wait()

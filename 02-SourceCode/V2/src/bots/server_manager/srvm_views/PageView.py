@@ -1,9 +1,8 @@
 import nextcord
-from .View import View
 
-from ...database.models.tables.Note import Note
+from ....database.models.tables.Note import Note
 
-class PageView(nextcord.ui.View, View):
+class PageView(nextcord.ui.View):
     """ # PageView class
 
     Description :
@@ -40,10 +39,11 @@ class PageView(nextcord.ui.View, View):
         ---
             :class:`None`
         """
+        super().__init__()
+
         self.pages = pages
         self.current_page = current_page
 
-        super().__init__()
 
     @nextcord.ui.button(label='Previous', style=nextcord.ButtonStyle.blurple)
     async def previous(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -122,7 +122,6 @@ class PageView(nextcord.ui.View, View):
             :class:`None`
         """
         # Create the embed
-        #interaction.message.embeds[0].title
         page = self.pages[self.current_page]
 
         embed = nextcord.Embed(title=interaction.message.embeds[0].title)

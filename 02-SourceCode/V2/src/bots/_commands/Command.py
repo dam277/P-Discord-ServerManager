@@ -117,9 +117,12 @@ class Command(ABC):
             :class:`bool`
         """
                 # Check if note list exists
+        # Check if the object is of the type
         if not isinstance(object, type):
+            # Send a message if the object is not of the type
             if not search:
                 return False
+            # Send a message if the object is none 
             if object is None:
                 await interaction.send(f"Element **{name}** not found")
                 return False

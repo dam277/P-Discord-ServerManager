@@ -284,6 +284,40 @@ class NoteList(Table):
         else:
             return result[0]
     
+    @staticmethod
+    async def delete_note_list_by_id(note_list_id: int) -> str:
+        """ # Delete a note list by id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Delete a note list in the database table by its id
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.delete_note_list_by_id()
+
+        Parameters : 
+        ---
+            - note_list_id : :class:`int` => Id of the note list
+
+        Returns : 
+        ---
+            :class:`str` => A message which confirm the deletion
+        """
+        # Get the query string
+        where = "id_noteList = %(id_noteList)s"
+        query = f"DELETE FROM {NoteList.TABLE} WHERE {where};"
+
+        # If the server exists, delete it from the database
+        result = await Database.get_instance().bind_exec(query, {"id_noteList": note_list_id})
+        if result[1] is True:
+            return f"The note list has been successfully deleted"
+        else:
+            return result[0]
+        
     # FORMAT OBJECTS ----------------------------------------------------------------
 
     @staticmethod

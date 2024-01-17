@@ -11,9 +11,16 @@ from .srvm_commands.files.GetFile import GetFile
 from .srvm_commands.notes.CreateNoteList import CreateNoteList 
 from .srvm_commands.notes.GetNoteList import GetNoteList 
 from .srvm_commands.notes.AddNote import AddNote 
+from .srvm_commands.notes.ModifyNote import ModifyNote
+from .srvm_commands.notes.DeleteNote import DeleteNote
+from .srvm_commands.notes.DeleteNoteList import DeleteNoteList
+from .srvm_commands.channels.CreatePrivateChannel import CreatePrivateChannel
+
+from .srvm_events.ChannelEvents import ChannelEvents
 
 from .srvm_autocompletes.files.FileAutocomplete import FileAutocomplete
 from .srvm_autocompletes.notes.NotelistAutocomplete import NotelistAutocomplete
+from .srvm_autocompletes.notes.NoteAutocomplete import NoteAutocomplete
 
 from ...utils.logger.Logger import Logger, LogDefinitions
 
@@ -85,6 +92,27 @@ class ServerManagerBot(Bot):
 
         @self.bot_instance.event
         async def on_message(message: nextcord.Message):
+            """ # Bot on_message event
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Event called when the bot receive a message\n
+                This check if the message is a command or not and process it
+
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.events(on_message())
+
+            Parameters :
+            ---
+                - message : :class:`nextcord.Message` => Message received by the bot
+
+            Returns :
+            ---
+                :class:`None`
+            """
             # Check if the message is a command or not and process it
             if message.content.startswith(self.bot_instance.command_prefix):
                 await self.bot_instance.process_commands(message)
@@ -94,7 +122,34 @@ class ServerManagerBot(Bot):
                 # Check if the author is the bot himself
                 if message.author == self.bot_instance.user:
                     return
-            
+        
+        @self.bot_instance.event
+        async def on_guild_channel_delete(channel: nextcord.abc.GuildChannel):
+            """ # Bot on_guild_channel_delete event
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Event called when a channel is deleted\n
+                This use :class:`ChannelEvents` class to execute this event
+
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.events(on_guild_channel_delete())
+
+            Parameters :
+            ---
+                - channel : :class:`nextcord.abc.GuildChannel` => Channel deleted
+
+            Returns :
+            ---
+                :class:`None`
+            """
+            event = ChannelEvents(channel)
+            await event.on_guild_channel_delete()
+
+
     def regular_commands(self):
         """ # Regular commands of the bot
         
@@ -158,7 +213,6 @@ class ServerManagerBot(Bot):
             """
             command = Setup(interaction.guild.id, interaction.guild.name)
             await command.execute(interaction)
-            self.bot_instance.commands
         #endregion ---- Setup command ------------------------
 
         #region ---- Create commands ------------------------
@@ -216,6 +270,33 @@ class ServerManagerBot(Bot):
             command = CreateNoteList(name, interaction.guild.id)
             await command.execute(interaction)
 
+        # ---- Create Note command ------------------------
+        @create.subcommand(name="privatechannel", description="Create a private channel")
+        async def create_private_channel(interaction: nextcord.Interaction, name: str):
+            """ # Bot create private channel subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Create a private channel to the server\n
+                This command is a subcommand of the create command
+
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(create_private_channel())
+
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - name : :class:`str` => Name of the private channel to create
+
+            Returns : 
+            ---
+                :class:`None`
+            """
+            command = CreatePrivateChannel(interaction.guild.id, name)
+            await command.execute(interaction)
         #endregion ----------------------------
         #endregion ----------------------------
 
@@ -416,6 +497,64 @@ class ServerManagerBot(Bot):
         #endregion ----------------------------
         #endregion ----------------------------
 
+        #region ---- Modify commands ------------------------
+        @self.bot_instance.slash_command(name="modify", description="Modify something (this is a parent command, you need to use a proposed subcommand)")
+        async def modify(interaction: nextcord.Interaction):
+            """ Bot modify command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Modify something from the server\n
+                This command is a parent command for the subcommands
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(modify())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns :
+            ---
+                :class:`None` 
+            """
+            pass
+
+        #region ---- subcommands ------------------------
+        # ---- Modify note command ------------------------
+        @modify.subcommand(name="note", description="Modify a note")
+        async def modify_note(interaction: nextcord.Interaction, title: str, new_text: str):
+            """ Bot modify note subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Modify a note from the server\n
+                This command is a subcommand of the modify command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(modify_note())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - title : :class:`str` => New title of the note
+                - new_text : :class:`str` => New text of the note
+                
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = ModifyNote(title, new_text, interaction.guild.id)
+            await command.execute(interaction)
+        #endregion ----------------------------
+        #endregion ----------------------------
+
         #region ---- Delete commands ------------------------
         @self.bot_instance.slash_command(name="delete", description="Delete something (this is a parent command, you need to use a proposed subcommand)")
         async def delete(interaction: nextcord.Interaction):
@@ -468,6 +607,59 @@ class ServerManagerBot(Bot):
             command = DeleteFile(file_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ----------------------------
+            
+        #region ---- Delete note command ------------------------
+        @delete.subcommand(name="note", description="Delete a note from a notelist")
+        async def delete_note(interaction: nextcord.Interaction, title: str):
+            """ Bot delete note subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Delete a note from a notelist\n
+                This command is a subcommand of the delete command
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(delete_note())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+                title :class:`str`: The title of the note to delete
+            
+            Returns:
+                :class:`None`
+            """
+            command = DeleteNote(title, interaction.guild.id)
+            await command.execute(interaction)
+        #endregion ----------------------------
+        #region ---- Delete notelist command ------------------------
+        @delete.subcommand(name="notelist", description="Delete a notelist")
+        async def delete_notelist(interaction: nextcord.Interaction, note_list_name: str):
+            """ Bot delete notelist subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Delete a notelist\n
+                This command is a subcommand of the delete command
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(delete_notelist())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+                name :class:`str`: The name of the notelist to delete
+            
+            Returns:
+                :class:`None`
+            """
+            command = DeleteNoteList(note_list_name, interaction.guild.id)
+            await command.execute(interaction)
+        #endregion ----------------------------
         #endregion ----------------------------
         #endregion ==========================================================================================================================
             
@@ -475,7 +667,7 @@ class ServerManagerBot(Bot):
         # Create autocomplete function for file subcommands
         @get_file.on_autocomplete("file_name")
         @delete_file.on_autocomplete("file_name")
-        async def file_autocomplete(interaction: nextcord.Interaction, file_name: str):
+        async def file_autocomplete(interaction: nextcord.Interaction, current: str):
             """ Bot file autocomplete function
             /!\\ This is a coroutine, it needs to be awaited
 
@@ -494,13 +686,14 @@ class ServerManagerBot(Bot):
             Returns:
                 :class:`None`
             """
-            autocomplete = FileAutocomplete(file_name, interaction.guild.id)
+            autocomplete = FileAutocomplete(current, interaction.guild.id)
             return await autocomplete.execute(interaction)
         
         # Create autocomplete function for notes and notelists subcommands
         @get_notelist.on_autocomplete("name")
         @add_note.on_autocomplete("note_list_name")
-        async def notelist_autocomplete(interaction: nextcord.Interaction, name: str):
+        @delete_notelist.on_autocomplete("note_list_name")
+        async def notelist_autocomplete(interaction: nextcord.Interaction, current: str):
             """ Bot note autocomplete function
             /!\\ This is a coroutine, it needs to be awaited
 
@@ -519,6 +712,30 @@ class ServerManagerBot(Bot):
             Returns:
                 :class:`None`
             """
-            autocomplete = NotelistAutocomplete(name, interaction.guild.id)
+            autocomplete = NotelistAutocomplete(current, interaction.guild.id)
+            return await autocomplete.execute(interaction)
+        
+        @modify_note.on_autocomplete("title")
+        @delete_note.on_autocomplete("title")
+        async def note_autocomplete(interaction: nextcord.Interaction, current: str):
+            """ Bot note autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the note title subcommand
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands_note_title_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = NoteAutocomplete(current, interaction.guild.id)
             return await autocomplete.execute(interaction)
         #endregion ==========================================================================================================================

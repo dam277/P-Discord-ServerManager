@@ -220,6 +220,177 @@ class Note(Table):
             return Note.format_list_object(result)
         else:
             return result[0]
+    
+    @staticmethod
+    async def get_notes_in_notelists_by_server_id(server_id: int) -> list["Note"]:
+        """ # Get notes in notelists by server id function
+        /!\\ This is a coroutine, it needs to be awaited
+        
+        Description :
+        ---
+            Get all notes stored in the database table by the server id
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.get_notes_in_notelists_by_server_id()
+
+        Parameters : 
+        ---
+            - server_id : :class:`int` => Server id
+
+        Returns : 
+        ---
+            :class:`list[Note]|None` => List of notes
+        """
+        # Get the query string
+        inner_select_server_id = "SELECT id_noteList FROM noteList WHERE fk_server = %(fk_server)s"
+        where = f"fk_noteList IN ({inner_select_server_id})"
+        query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"fk_server": server_id})
+        if result[1] is True:
+            return Note.format_list_object(result)
+        else:
+            return result[0]
+    
+    @staticmethod
+    async def get_note_in_notelists_by_server_id_and_note_title(server_id: int, note_title: str) -> "Note":
+        """ # Get notes in notelists by server id and note title function
+        /!\\ This is a coroutine, it needs to be awaited
+        
+        Description :
+        ---
+            Get all notes stored in the database table by the server id and note title
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.get_notes_in_notelists_by_server_id_and_note_title()
+
+        Parameters : 
+        ---
+            - server_id : :class:`int` => Server id
+            - note_title : :class:`str` => Note title
+
+        Returns : 
+        ---
+            :class:`list[Note]|None` => List of notes
+        """
+        # Get the query string
+        inner_select_server_id = "SELECT id_noteList FROM noteList WHERE fk_server = %(fk_server)s"
+        where = f"fk_noteList IN ({inner_select_server_id}) AND title = %(title)s"
+        query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"fk_server": server_id, "title": note_title})
+        if result[1] is True:
+            return Note.format_object(result)
+        else:
+            return result[0]
+        
+    @staticmethod
+    async def update_note(note_id: int, text: str) -> str:
+        """ # Update note function
+        /!\\ This is a coroutine, it needs to be awaited
+        
+        Description :
+        ---
+            Update a note stored in the database table
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.update_note()
+
+        Parameters : 
+        ---
+            - note_id : :class:`int` => Note id
+            - text : :class:`str` => New text of the note
+
+        Returns : 
+        ---
+            :class:`str` => Message of the result
+        """
+        # Get the query string
+        where = "id_note = %(id_note)s"
+        set = "text = %(text)s"
+        query = f"UPDATE {Note.TABLE} SET {set} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"id_note": note_id, "text": text})
+        if result[1] is True:
+            return f"The note has been successfully updated !"
+        else:
+            return result[0]
+        
+    @staticmethod
+    async def delete_note_by_id(id_note: int) -> str:
+        """ # Delete note by id function
+        /!\\ This is a coroutine, it needs to be awaited
+        
+        Description :
+        ---
+            Delete a note stored in the database table by its id
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.delete_note_by_id()
+
+        Parameters : 
+        ---
+            - id_note : :class:`int` => Note id
+
+        Returns : 
+        ---
+            :class:`str` => Message of the result
+        """
+        # Get the query string
+        where = "id_note = %(id_note)s"
+        query = f"DELETE FROM {Note.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"id_note": id_note})
+        if result[1] is True:
+            return f"The note has been successfully deleted !"
+        else:
+            return result[0]
+        
+    @staticmethod
+    async def delete_notes_by_id_notelist(note_list_id: int) -> str:
+        """ # Delete notes by id notelist function
+        /!\\ This is a coroutine, it needs to be awaited
+        
+        Description :
+        ---
+            Delete all notes stored in the database table by the note list id
+        
+        Access : 
+        ---
+            src.database.models.tables.Note.py\n
+            Note.delete_notes_by_id_notelist()
+
+        Parameters : 
+        ---
+            - note_list_id : :class:`int` => Note list id
+
+        Returns : 
+        ---
+            :class:`str` => Message of the result
+        """
+        # Get the query string
+        where = "fk_noteList = %(fk_noteList)s"
+        query = f"DELETE FROM {Note.TABLE} WHERE {where};"
+
+        # Get the result by executing query into the database
+        result = await Database.get_instance().bind_exec(query, {"fk_noteList": note_list_id})
+        if result[1] is True:
+            return f"The notes has been successfully deleted !"
+        else:
+            return result[0]
+        
     # FORMAT OBJECTS ----------------------------------------------------------------
 
     @staticmethod

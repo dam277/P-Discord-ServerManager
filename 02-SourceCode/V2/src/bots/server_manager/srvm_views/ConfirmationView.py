@@ -1,7 +1,6 @@
 import nextcord
-from .View import View
 
-class ConfirmationView(nextcord.ui.View, View):
+class ConfirmationView(nextcord.ui.View):
     """ ConfirmationView class
 
     Description :   
@@ -29,6 +28,7 @@ class ConfirmationView(nextcord.ui.View, View):
             :class:`None`        
         """
         super().__init__()
+
         self.value = True
 
     @nextcord.ui.button(label='Confirm', style=nextcord.ButtonStyle.green)

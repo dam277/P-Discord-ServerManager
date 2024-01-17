@@ -1,4 +1,3 @@
-from typing import Any
 from mysql.connector.cursor import MySQLCursor
 from ...Database import Database
 from ..Table import Table
