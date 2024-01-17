@@ -94,8 +94,8 @@ class Base(ABC):
 
         Access : 
         ---
-            src.bots.commands.Command.py\n
-            Command.get_file_type()
+            src.bots.Base.py\n
+            Base.get_file_type()
 
         Parameters :
         ---
