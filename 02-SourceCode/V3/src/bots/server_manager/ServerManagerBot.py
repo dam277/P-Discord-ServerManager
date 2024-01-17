@@ -3,10 +3,11 @@ from nextcord.ext import commands
 
 from colorama import Fore
 
+from .._commands.Command import Command
+
 from ..Bot import Bot
 from ...utils.logger.Logger import Logger, LogDefinitions
-
-from .srvm_commands import Setup
+from ...utils.enums.Commands import Commands
 
 class ServerManagerBot(Bot):
     """ # Server manager bot class
@@ -55,6 +56,8 @@ class ServerManagerBot(Bot):
         self.events()
         self.regular_commands()
         self.slash_commands()
+
+        Command.get_ordered_commands()
 
     def events(self):
         """ # Events of the bot
@@ -142,7 +145,31 @@ class ServerManagerBot(Bot):
             :class:`None`
         """
         Logger.log(LogDefinitions.INFO, f"Setting up {__class__.__name__} slash commands")
-        
+
+        async def execute(interaction: nextcord.Interaction, command: Command):
+            """ # Execute an element that inherit from :class:`Base`
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Execute a command
+
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(execute_command())
+
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - command : :class:`Command` => Command to execute
+
+            Returns :
+            ---
+                :class:`None`
+            """
+            await command.execute(interaction=interaction)        
+
         #region ---- Setup command ------------------------
         @self.bot_instance.slash_command(name="setup", description="Setup the server into the database")
         async def setup(interaction: nextcord.Interaction):
@@ -167,12 +194,9 @@ class ServerManagerBot(Bot):
             ---
                 :class:`None`
             """
-            command = Setup(interaction.guild.id, interaction.guild.name)
-            await command.execute(interaction=interaction)
+            command = Commands.setup.value(interaction.guild_id, interaction.guild.name)
+            await execute(interaction=interaction, command=command)
         #endregion ---- Setup command ------------------------
-        
-        
-            
 #region temp imports
 # from .srvm_commands.setup.Setup import Setup
 # from .srvm_commands.help.GetCommands import GetCommands

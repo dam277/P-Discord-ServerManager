@@ -65,6 +65,6 @@ class ChannelEvents(Event):
         Logger.log(LogDefinitions.INFO, f"{__class__.__name__} event triggered on {self.channel.name} channel deletion")
         # Get the private channel if exists
         private_channel = await PrivateChannel.get_channel_by_channel_id(self.channel.id)
-        print(self.channel.name)
+        
         print(private_channel.id)
     
