@@ -57,8 +57,6 @@ class ServerManagerBot(Bot):
         self.regular_commands()
         self.slash_commands()
 
-        Command.get_ordered_commands()
-
     def events(self):
         """ # Events of the bot
         

@@ -1,10 +1,6 @@
 from ..Base import Base
 import nextcord
 
-from colorama import Fore
-from tabulate import tabulate
-import pprint
-
 from ...utils.enums.permissions.DiscordPermissions import DiscordPermissions
 from ...utils.enums.permissions.CheckType import CheckType
 
@@ -30,6 +26,27 @@ class Command(Base):
 
     # Permision decorator
     def permissions(perms: list[DiscordPermissions], check_type: CheckType = CheckType.any):
+        """ # Permission decorator
+        @Decorator
+        
+        Description :
+        ---
+            Check if the user has the perms to execute the command
+        
+        Access :
+        ---
+            src.bots.server_manager.commands.Command.py\n
+            @Command.permissions()
+        
+        Parameters :
+        ---
+            - perms : :class:`list` => Perms to check
+            - check_type : :class:`CheckType` => Type of the check
+        
+        Returns :
+        ---
+            :class:`None`
+        """
         # Decorator function
         def decorator(func):
             # Check if the perms sended are valid
@@ -74,6 +91,29 @@ class Command(Base):
 
     # Register command decorator
     def register(name: str, description: str, parent: str = None, **params):
+        """ # Register command decorator
+        @Decorator
+
+        Description :
+        ---
+            Register a command in the commands list
+
+        Access :
+        ---
+            src.bots.server_manager.commands.Command.py\n
+            @Command.register()
+
+        Parameters :
+        ---
+            - name : :class:`str` => Name of the command
+            - description : :class:`str` => Description of the command
+            - parent : :class:`str` => Parent of the command
+            - params : :class:`dict` => Params of the command
+
+        Returns :
+        ---
+            :class:`None`
+        """
         # Register the command
         Logger.log(LogDefinitions.INFO ,f"Registering command: '{name}'")
 
@@ -104,7 +144,7 @@ class Command(Base):
     
     # Get commands function
     @staticmethod
-    def get_commands():
+    def get_commands() -> list[dict]:
         """ # Get commands function
         
         Description :
@@ -128,7 +168,7 @@ class Command(Base):
     
     # Get command function
     @staticmethod
-    def get_command(name: str):
+    def get_command(name: str) -> dict:
         """ # Get command function
         
         Description :
@@ -152,7 +192,7 @@ class Command(Base):
     
     # Get command by parent function
     @staticmethod
-    def get_ordered_commands():
+    def get_ordered_commands() -> list[dict]:
         """ # Get ordered commands function
 
         Description :
