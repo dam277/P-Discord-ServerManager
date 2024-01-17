@@ -141,7 +141,8 @@ class Command(Base):
             # Wrapper function
             def wrapper(*args, **kwargs):
                 # Execute the original command function
-                Logger.log(LogDefinitions.INFO ,f"Executing command: '{name}'")
+                interaction = kwargs.get("interaction")
+                Logger.log(LogDefinitions.INFO ,f"Executing command: '{name}' by {interaction.user.name}")
                 result = func(*args, **kwargs)
                 Logger.log(LogDefinitions.INFO ,f"Command execution complete.")
                 return result

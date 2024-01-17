@@ -1,14 +1,6 @@
 import nextcord
-from nextcord.ext import commands
-from colorama import Fore
-
-from .....utils.enums.permissions.DiscordPermissions import DiscordPermissions
 
 from ...._commands.Command import Command
-
-from .....database.models.tables.Server import Server
-
-from .....utils.logger.Logger import Logger, LogDefinitions
 
 class Help(Command):
     """ # Help command class
@@ -45,7 +37,7 @@ class Help(Command):
         # Set the datas into the parent
         super().__init__()
     
-    @Command.register(name="/help", description="Show the help message with all the commands")
+    @Command.register(name="/help", description="Show the help message and get the list of usable commands")
     async def execute(self, interaction: nextcord.Interaction):
         """ # Execute method of help command
         
@@ -66,33 +58,59 @@ class Help(Command):
         ---
             :class:`None`
         """
-        print(Command.get_commands())
         discord_commands = Command.get_ordered_commands()
         embed = nextcord.Embed(title="Help", description="Here is the list of all the commands", color=0x00ff00)
 
-        
         # Get children function with recursivity
         def set_embed(command: dict, depth: int = 1):
+            """ # Set embed function
+
+            Description :
+            ---
+                Set the embed with the commands wit recursivity
+
+            Access :
+            ---
+                src.bots.server_manager.srvm_commands.help.Help.py\n
+                Help.execute(set_embed())
+            
+            Parameters :
+            ---
+                - command : :class:`dict` => Command to set
+                - depth : :class:`int` => Depth of the command
+            
+            Returns :
+            ---
+                :class:`None`
+            """
             # Get all the subcommands of the actual command
             subcommands = command.get("children") if command.get("children") else None
-            print(f"{Fore.MAGENTA}Subcommands : of {command.get("name")}", subcommands)
-
             # Check if the command has children
             if subcommands:
                 # For all the subcommands of the actual command get their children
                 for subcommand in subcommands:
-                    print(f"{Fore.LIGHTYELLOW_EX}Subcommand : {subcommand}")
 
                     # Create the name of the function with depth => "-" and command name
-                    command_name = f"{'_' * depth} [{depth}] {subcommand.get("name")}"
+                    command_name = f"{'-' * depth} [{depth}] {subcommand.get("name")}"
+                    command_description = f"{subcommand.get("description")}"
+                    
+                    # Get the params of the subcommand
+                    params = subcommand.get("params")
+                    if params:
+                        command_description += "\n\t**Parameters :**"
+
+                        # Get the params of the subcommand
+                        for param in params:
+                            command_description += f"\n- {param} : {params.get(param)}"
 
                     # Add the subcommand to the embed
-                    embed.add_field(name=command_name, value=subcommand.get("description"), inline=False)
+                    embed.add_field(name=f"__{command_name}__", value=command_description, inline=False)
                     set_embed(subcommand, depth + 1)
 
+        # For all the commands get their children and add them to the embed
         for command in discord_commands:
             embed.add_field(name=command.get("name"), value=command.get("description"), inline=False)
-
             set_embed(command)
 
+        # Send the embed to the user
         await interaction.response.send_message(embed=embed, ephemeral=True)

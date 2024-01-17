@@ -169,7 +169,7 @@ class ServerManagerBot(Bot):
             await command.execute(interaction=interaction)        
 
         #region ---- Setup command ------------------------
-        @self.bot_instance.slash_command(name="setup", description="Setup the server into the database")
+        @self.bot_instance.slash_command(name="setup", description="Setup the server into the database to be able to use the bot with this discord server")
         async def setup(interaction: nextcord.Interaction):
             """ # Bot setup command
             /!\\ This is a coroutine, it needs to be awaited
@@ -197,7 +197,7 @@ class ServerManagerBot(Bot):
         #endregion ---- Setup command ------------------------
             
         #region ---- Help command ------------------------
-        @self.bot_instance.slash_command(name="help", description="Get the list of commands")
+        @self.bot_instance.slash_command(name="help", description="Get the list of usable commands")
         async def help(interaction: nextcord.Interaction):
             """ # Bot help command
             /!\\ This is a coroutine, it needs to be awaited
