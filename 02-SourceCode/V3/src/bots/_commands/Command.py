@@ -218,3 +218,6 @@ class Command(Base):
         commands = []
         for command in top_commands:
             commands.append(get_children(command))
+
+        # Return the commands
+        return commands
