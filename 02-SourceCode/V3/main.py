@@ -29,6 +29,7 @@ def main():
     server_manager_bot = ServerManagerBot(server_manager_token)
     server_manager_bot.run()
 
+# Main function call
 if __name__ == '__main__':
     main()
     
