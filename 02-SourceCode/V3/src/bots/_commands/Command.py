@@ -4,10 +4,13 @@ import nextcord
 from colorama import Fore
 import copy
 
+import asyncio
+
 from ...utils.enums.permissions.DiscordPermissions import DiscordPermissions
 from ...utils.enums.permissions.CheckType import CheckType
 
 from ...utils.logger.Logger import Logger, LogDefinitions
+from ...utils.enums.CommandContext import CommandContext
 
 class Command(Base):
     """ # Command class
@@ -26,6 +29,7 @@ class Command(Base):
         - Base : :class:`Base` => Parent class of all commands
     """
     commands = []
+    has_permission = True
 
     # Permision decorator
     def permissions(perms: list[DiscordPermissions], check_type: CheckType = CheckType.any):
@@ -58,7 +62,7 @@ class Command(Base):
                 Logger.log(LogDefinitions.ERROR, f"invalid permission(s) sended: {', '.join(invalid_perms)}")
 
             # Wrapper function
-            def wrapper(object: object, interaction: nextcord.Interaction):
+            def wrapper(self: Command, interaction: nextcord.Interaction):
                 Logger.log(LogDefinitions.INFO, "Checking permission...")
 
                 # Get the channel and the permissions of the user
@@ -84,16 +88,17 @@ class Command(Base):
                 if passed:
                     # Execute the original command function
                     Logger.log(LogDefinitions.INFO ,"Permission granted for the command")
-                    return func(object, interaction)
+                    return func(self, interaction)
                 else:
                     # Send a message to the user to tell him he doesn't have the permission to execute the command
                     Logger.log(LogDefinitions.WARNING ,"Permission denied for the command")
-                    return Base.permission_denied(interaction)
+                    self.has_permission = False
+                    return asyncio.create_task(self.permission_denied(interaction))
             return wrapper
         return decorator
 
     # Register command decorator
-    def register(name: str, description: str, parent: str = None, **params):
+    def register(name: str, description: str, parent: str = None, context: CommandContext = None, **params):
         """ # Register command decorator
         @Decorator
 
@@ -127,7 +132,7 @@ class Command(Base):
         # Check if the command has already been registered
         if not Command.get_command(name):
             # Register the command
-            command = {"name": name, "description": description, "parent": parent, "params": params}
+            command = {"name": name, "description": description, "parent": parent, "context": context, "params": params}
             Command.commands.append(command)
 
             # Check if the command has been successfully registered 
@@ -140,9 +145,10 @@ class Command(Base):
         def decorator(func):
             # Wrapper function
             def wrapper(*args, **kwargs):
-                # Execute the original command function
-                interaction = kwargs.get("interaction")
+                # Check if arg or kwargs contains interaction
+                interaction = kwargs.get("interaction") if kwargs.get("interaction") else next((arg for arg in args if isinstance(arg, nextcord.Interaction)), "no name")
                 Logger.log(LogDefinitions.INFO ,f"Executing command: '{name}' by {interaction.user.name}")
+                # Execute the original command function
                 result = func(*args, **kwargs)
                 Logger.log(LogDefinitions.INFO ,f"Command execution complete.")
                 return result

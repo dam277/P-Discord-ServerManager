@@ -110,11 +110,11 @@ class PrivateChannel(Table):
             :class:`list` => List of private channel
         """
         # Get the query string
-        where = "id_channel = %(id_channel)s"
+        where = "channelID = %(channelID)s"
         query = f"SELECT * FROM {PrivateChannel.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_channel" : channel_id})
+        result = await Database.get_instance().bind_exec(query, {"channelID" : channel_id})
 
         # Check if the query passed
         if result.get("passed"):
@@ -156,7 +156,7 @@ class PrivateChannel(Table):
         return result
         
     @staticmethod 
-    async def delete_channel_by_id(channel_id: int) -> dict[bool, Union[MySQLCursor, str]]:
+    async def delete_channel_by_id(id_private_channel: int) -> dict[bool, Union[MySQLCursor, str]]:
         """ # Delete channel
         
         Description :
@@ -170,18 +170,18 @@ class PrivateChannel(Table):
 
         Parameters :
         ---
-            - channel_id : :class:`int` => The id of the channel
+            - id_private_channel : :class:`int` => The id of the channel
 
         Returns :
         ---
             :class:`PrivateChannel` => The private channel
         """
         # Get the query string
-        where = "channelID = %(channelID)s"
+        where = "id_privateChannel = %(id_privateChannel)s"
         query = f"DELETE FROM {PrivateChannel.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"channelID" : channel_id})
+        result = await Database.get_instance().bind_exec(query, {"id_privateChannel" : id_private_channel})
 
         # Return the result
         return result

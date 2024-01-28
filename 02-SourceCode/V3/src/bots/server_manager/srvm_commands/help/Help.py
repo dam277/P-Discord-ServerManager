@@ -101,7 +101,14 @@ class Help(Command):
 
                         # Get the params of the subcommand
                         for param in params:
-                            command_description += f"\n- {param} : {params.get(param)}"
+                            param_description = params.get(param)
+                            # Check if the param contains "[optional]"
+                            if "[optional]" in param_description:
+                                # Remove "[optional]" from the param description and put it before the param name
+                                param_description = param_description.replace("[optional]", "")
+                                command_description += f"\n- _**[optional]** {param} : {param_description}_"
+                            else:
+                                command_description += f"\n- {param} : {param_description}"
 
                     # Add the subcommand to the embed
                     embed.add_field(name=f"__{command_name}__", value=command_description, inline=False)

@@ -114,8 +114,11 @@ class Image(File):
             params = "(%(id_file)s)"
             query = f"INSERT INTO {Image.TABLE} {fields} VALUES {params};"
 
+            # Get the last file id
+            file_id_result = await File.get_last_file_id()
+            
             # Execute the query
-            result = await Database.get_instance().bind_exec(query, {"id_file" : result.get("id")})
+            result = await Database.get_instance().bind_exec(query, {"id_file" : file_id_result.get("value")})
 
         # Return the result
         return result

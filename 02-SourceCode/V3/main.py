@@ -21,7 +21,7 @@ def main():
         :class:`None`
     """
     # Set the config of logging and load dotenv
-    #logging.basicConfig(filename="logs.log", filemode="w", level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s',datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(filename="logs.log", filemode="w", level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s',datefmt='%Y-%m-%d %H:%M:%S')
     load_dotenv()
 
     # Create a server manager bot

@@ -106,14 +106,14 @@ class File(Table):
             :class:`int|None` => The last id of the file table, or None if no records exist
         """
         # Get the query string
-        query = f"SELECT * FROM {File.TABLE} WHERE id_file = (SELECT MAX(id_file) FROM file)"
+        query = f"SELECT id_file FROM {File.TABLE} WHERE id_file = (SELECT MAX(id_file) FROM file)"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance().simple_exec(query)  
 
         # Check if the query passed
         if result.get("passed"):
-            return File.format_object(result.get("cursor"), File.create_object)
+            return File.format_object(result.get("cursor"), File.create_object, True)
         else:
             return result
         

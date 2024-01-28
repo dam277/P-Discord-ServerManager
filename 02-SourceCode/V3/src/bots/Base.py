@@ -2,6 +2,8 @@ import json
 from abc import ABC, abstractmethod
 import nextcord
 
+import asyncio
+
 from ..utils.enums.FileTypes import FileTypes
 
 class Base(ABC):
@@ -61,9 +63,8 @@ class Base(ABC):
             :class:`None`
         """
         pass
-
-    @staticmethod
-    async def permission_denied(interaction: nextcord.Interaction):
+    
+    async def permission_denied(self, interaction: nextcord.Interaction):
         """ # Permission denied function
         
         Description :
@@ -83,9 +84,32 @@ class Base(ABC):
         ---
             :class:`None`
         """
-        await interaction.response.send_message("You don't have the permission to execute this command.", ephemeral=True)
+        return await interaction.followup.send("You don't have the permission to execute this command", ephemeral=True) if interaction.response.is_done() else await interaction.send("You don't have the permission to execute this command", ephemeral=True)
+    
+    async def delete_category(self, category: nextcord.CategoryChannel):
+            """ # Delete category function
 
-    def get_file_type(self, file_name):
+            Description :
+            ---
+                Delete the category of the user
+
+            Access :
+            ---
+                src.bots.server_manager.srvm_events.OnVoiceStateUpdate.py\n
+                OnVoiceStateUpdate.on_voice_channel_leave.delete_category()
+
+            Returns :
+            ---
+                :class:`None`
+            """
+            # Delete all the category channels
+            for channel in category.channels:
+                await channel.delete()
+
+            # Delete the category
+            await category.delete()
+
+    def get_file_type(self, file_name: str):
         """ # Get file type function
         
         Description :
@@ -107,7 +131,7 @@ class Base(ABC):
         """
         # Get the extension of the file
         extension = file_name.split(".")[-1].lower()
-
+        
         # Set the file type depending on the extension
         if extension in self.settings["resources"]["extensions"]["image"]:
             self.file_type = FileTypes.IMAGE
