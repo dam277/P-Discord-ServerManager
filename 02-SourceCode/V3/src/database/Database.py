@@ -1,7 +1,5 @@
 import mysql.connector as connector
 from mysql.connector.cursor import MySQLCursor
-import os
-import dotenv
 
 from ..utils.logger.Logger import Logger, LogDefinitions
 
@@ -18,7 +16,7 @@ class Database:
         Database
     """
     instance = None         # Instance of the database
-    def __init__(self):
+    def __init__(self, configs: dict[str, str] = None):
         """ # Class constructor of database
         
         Description :
@@ -40,8 +38,7 @@ class Database:
             :class:`DatabaseConnectionExeption`
         """
         # Get the datas to connect the server
-        dotenv.load_dotenv()
-        configs = {"db_host": os.getenv("DB_HOST"), "db_port": os.getenv("DB_PORT"), "db_user": os.getenv("DB_USER"), "db_password" : os.getenv("DB_PASSWORD"), "db_name": os.getenv("DB_NAME")}
+        self.configs = configs
         
         # Try to connect the database server
         try:
@@ -52,7 +49,7 @@ class Database:
             Logger.log(LogDefinitions.ERROR, f"Exception while connecting to database : {e}")
 
     @staticmethod
-    def get_instance():
+    def get_instance(configs: dict[str, str] = None):
         """ # get_instance function
         @staticmethod
         
@@ -71,7 +68,7 @@ class Database:
         """
         # Create a new instance if doesn't exist
         if Database.instance is None:
-            Database.instance = Database()
+            Database.instance = Database(configs)
         return Database.instance
     
     async def bind_exec(self, query, values) -> dict[bool, MySQLCursor|str]:
