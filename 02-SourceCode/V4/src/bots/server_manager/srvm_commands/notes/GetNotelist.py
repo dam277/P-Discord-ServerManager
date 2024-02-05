@@ -3,10 +3,10 @@ import nextcord
 from ...._commands.Command import Command
 from ..Get import Get
 
-from .....database.models.tables.NoteList import NoteList
-from .....database.models.tables.Server import Server
-from .....database.models.tables.Note import Note
-from .....database.models.tables.File import File
+from .....database.models.srvm_tables.NoteList import NoteList
+from .....database.models.srvm_tables.Server import Server
+from .....database.models.srvm_tables.Note import Note
+from .....database.models.srvm_tables.File import File
 
 from ....server_manager.srvm_views.PageView import PageView
 

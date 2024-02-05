@@ -1,12 +1,16 @@
 import nextcord
 import os
 
-#from ..srvm_views.ConfirmationView import ConfirmationView
+from src.bots.server_manager.srvm_commands import channels
+
+from typing import Union
+
 from ...._commands.Command import Command
 
 from ...._events.Event import Event
-from .....database.models.tables.Server import Server
-from .....database.models.tables.PrivateChannel import PrivateChannel
+from .....database.models.srvm_tables.Server import Server
+from .....database.models.srvm_tables.Channel import Channel
+from .....database.models.srvm_tables.ChannelType import ChannelType
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 
@@ -62,28 +66,49 @@ class OnGuildChannelDelete(Event):
         ---
             :class:`None`
         """
-        await self.check_private_channel()
+       
+        # Check if the channel is a special channel
+        await self.check_special_channels()
 
-    @Event.trigger(name="private_channel", parent=True)
-    async def check_private_channel(self):
-        # Get the private channel if exists
-        private_channel_result = await PrivateChannel.get_channel_by_guild_id(self.channel.guild.id)
+    @Event.trigger(name="special_channels", parent=True)
+    async def check_special_channels(self):
+        """ # Check special channels
+
+        Description :
+        ---
+            Check if the deleted channel is a special channel
+        
+        Access :
+        ---
+            src.bots.server_manager.srvm_events.OnGuildChannelDelete.py\n
+            OnGuildChannelDelete.check_special_channels()
+
+        Returns :
+        ---
+            :class:`None`
+        """
+        # Get the Special channel if exists
+        channels_result = await Channel.get_channels_by_guild_id(self.channel.guild.id)
         
         # Check if the channel exists
-        if not private_channel_result.get("object") or not private_channel_result.get("passed"):
+        if not channels_result.get("objects") or not channels_result.get("passed"):
             return
         
-        # Check if the deleted channel is the private channel
-        if private_channel_result.get("object").channelID != self.channel.id:
-            return
+        # Get the channels
+        channels = channels_result.get("objects")
         
-        # Delete the private channel from the database
-        result = await PrivateChannel.delete_channel_by_id(private_channel_result.get("object").id)
+        for channel in channels:
+            # Check if the deleted channel is a special channel
+            if channel.channelID != self.channel.id:
+                continue
+            
+            # Delete the Special channel from the database
+            result = await Channel.delete_channel_by_id(channel.id)
 
-        # Check if the channel has been deleted
-        if not result.get("passed"):
-            Logger.log(LogDefinitions.ERROR, f"Private channel {private_channel_result.get('object').channelID}/{self.channel.name} not deleted")
-            return
-        
-        Logger.log(LogDefinitions.SUCCESS, f"Private channel {private_channel_result.get('object').channelID}/{self.channel.name} deleted")
-        return 
+            # Check if the channel has been deleted
+            if not result.get("passed"):
+                Logger.log(LogDefinitions.ERROR, f"Special channel {channel.channelID}/{self.channel.name} not deleted")
+                return
+            
+            Logger.log(LogDefinitions.SUCCESS, f"Special channel {channel.channelID}/{self.channel.name} deleted")
+            return 

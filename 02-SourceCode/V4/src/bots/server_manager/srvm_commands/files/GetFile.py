@@ -5,7 +5,7 @@ import os
 from ...._commands.Command import Command
 from ..Get import Get
 
-from .....database.models.tables.File import File
+from .....database.models.srvm_tables.File import File
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 

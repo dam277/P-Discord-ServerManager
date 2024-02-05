@@ -3,9 +3,9 @@ import nextcord
 from ..Add import Add
 from ...._commands.Command import Command
 
-from .....database.models.tables.NoteList import NoteList
-from .....database.models.tables.Note import Note
-from .....database.models.tables.Server import Server
+from .....database.models.srvm_tables.NoteList import NoteList
+from .....database.models.srvm_tables.Note import Note
+from .....database.models.srvm_tables.Server import Server
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 

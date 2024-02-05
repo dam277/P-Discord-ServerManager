@@ -3,10 +3,10 @@ import os
 
 from ...._autocompletes.Autocomplete import Autocomplete
 
-from .....database.models.tables.Server import Server
-from .....database.models.tables.File import File
-from .....database.models.tables.files.Image import Image
-from .....database.models.tables.files.Music import Music
+from .....database.models.srvm_tables.Server import Server
+from .....database.models.srvm_tables.File import File
+from .....database.models.srvm_tables.files.Image import Image
+from .....database.models.srvm_tables.files.Music import Music
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 from .....utils.enums.FileTypes import FileTypesString

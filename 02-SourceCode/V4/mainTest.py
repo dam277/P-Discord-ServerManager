@@ -1,8 +1,8 @@
-from src.database.models.tables.Server import Server    
-from src.database.models.tables.File import File    
-from src.database.models.tables.Note import Note    
-from src.database.models.tables.NoteList import NoteList  
-from src.database.models.tables.PrivateChannel import PrivateChannel  
+from src.database.models.srvm_tables.Server import Server    
+from src.database.models.srvm_tables.File import File    
+from src.database.models.srvm_tables.Note import Note    
+from src.database.models.srvm_tables.NoteList import NoteList  
+from src.database.models.srvm_tables.Channel import PrivateChannel  
 import asyncio
 
 

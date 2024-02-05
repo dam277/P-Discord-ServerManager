@@ -3,6 +3,8 @@ from ...Database import Database
 from ..Table import Table
 from typing import Union
 
+from ....utils.enums.Databases import Databases
+
 class File(Table):
     """ # File class
         
@@ -25,6 +27,7 @@ class File(Table):
     fk_server = None        # Foreign key of the server id
 
     TABLE = "file"          # Database table name
+    DATABASE = Databases.server_manager # Database of the server table
 
     def __init__(self, id: int|None, name: str|None, path: str|None, fk_server: int|None):
         """ # Class constructor of File object 
@@ -78,7 +81,7 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE};"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance(File.DATABASE).simple_exec(query)
 
         # Check if the query passed
         if result.get("passed"):
@@ -109,7 +112,7 @@ class File(Table):
         query = f"SELECT id_file FROM {File.TABLE} WHERE id_file = (SELECT MAX(id_file) FROM file)"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)  
+        result = await Database.get_instance(File.DATABASE).simple_exec(query)  
 
         # Check if the query passed
         if result.get("passed"):
@@ -145,7 +148,7 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
         
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_file" : id_file})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"id_file" : id_file})
 
         # Check if the query passed
         if result.get("passed"):
@@ -181,7 +184,7 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"name" : name})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"name" : name})
 
         # Check if the query passed
         if result.get("passed"):
@@ -218,7 +221,7 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"  
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"name" : name, "guild_id" : guild_id})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"name" : name, "guild_id" : guild_id})
 
         # Check if the query passed
         if result.get("passed"):
@@ -257,7 +260,7 @@ class File(Table):
         query = f"INSERT INTO {File.TABLE} {fields} VALUE {params};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"name" : name, "path" : path, "fk_server" : fk_server})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"name" : name, "path" : path, "fk_server" : fk_server})
 
         # Return the result
         return result
@@ -290,7 +293,7 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"path" : path})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"path" : path})
 
         # Check if the query passed
         if result.get("passed"):
@@ -325,7 +328,7 @@ class File(Table):
         query = f"SELECT * FROM {File.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"fk_server" : id_server})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"fk_server" : id_server})
 
         # Check if the query passed
         if result.get("passed"):
@@ -362,7 +365,7 @@ class File(Table):
         query = f"DELETE FROM {File.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_file" : id_file})
+        result = await Database.get_instance(File.DATABASE).bind_exec(query, {"id_file" : id_file})
 
         # Return the result
         return result

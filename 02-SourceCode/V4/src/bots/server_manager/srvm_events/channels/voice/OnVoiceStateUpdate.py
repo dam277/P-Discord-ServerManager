@@ -5,8 +5,10 @@ import os
 from ....._commands.Command import Command
 
 from ....._events.Event import Event
-from ......database.models.tables.Server import Server
-from ......database.models.tables.PrivateChannel import PrivateChannel
+from ......database.models.srvm_tables.Server import Server
+from ......database.models.srvm_tables.Channel import Channel
+
+from ......utils.enums.ChannelTypes import ChannelTypes
 
 from ......utils.logger.Logger import Logger, LogDefinitions
 from ......utils.enums.CommandContext import CommandContext
@@ -97,7 +99,7 @@ class OnVoiceStateUpdate(Event):
         guild = self.after.channel.guild
         
         # Check if the channel is the private channel
-        private_channel_result = await PrivateChannel.get_channel_by_channel_id(self.after.channel.id)
+        private_channel_result = await Channel.get_channel_by_id(self.after.channel.id)
 
         async def create_private_category():
             """ # Create private category function
@@ -161,7 +163,7 @@ class OnVoiceStateUpdate(Event):
             await self.member.move_to(voice)
 
         # Check if the channel exists and if this is the private channel
-        if private_channel_result.get("passed") and private_channel_result.get("object") is not None and private_channel_result.get("object").channelID == self.after.channel.id:
+        if private_channel_result.get("passed") and private_channel_result.get("object") is not None and private_channel_result.get("object").channelID == self.after.channel.id and private_channel_result.get("object").fk_channelType == ChannelTypes.PRIVATE.value:
             await create_private_category()
     
     @Event.trigger(name="on_voice_channel_leave", parent=True)

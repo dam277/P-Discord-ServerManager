@@ -3,6 +3,8 @@ from ...Database import Database
 from ..Table import Table
 from typing import Union
 
+from ....utils.enums.Databases import Databases
+
 class Note(Table):
     """ # Note class
         
@@ -25,6 +27,7 @@ class Note(Table):
     fk_note_list = None     # Foreign key of notes list
 
     TABLE = "note"          # Name of the table
+    DATABASE = Databases.server_manager # Database of the server table
 
     def __init__(self, id: int|None, title: str|None, text: str|None, fk_note_list: int|None):
         """ # Class constructor of Note object 
@@ -78,7 +81,7 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE};"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance(Note.DATABASE).simple_exec(query)
 
         # Check if the query passed
         if result.get("passed"):
@@ -114,7 +117,7 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
         
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_note" : id_note})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"id_note" : id_note})
 
         # Check if the query passed
         if result.get("passed"):
@@ -150,7 +153,7 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"title" : title})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"title" : title})
 
         # Check if the query passed
         if result.get("passed"):
@@ -189,7 +192,7 @@ class Note(Table):
         query = f"INSERT INTO {Note.TABLE} {fields} VALUES {params};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"title" : title, "text" : text, "fk_noteList" : fk_note_list})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"title" : title, "text" : text, "fk_noteList" : fk_note_list})
 
         # Return the result
         return result
@@ -222,7 +225,7 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"fk_noteList" : note_list_id})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"fk_noteList" : note_list_id})
         
         # Check if the query passed
         if result.get("passed"):
@@ -258,7 +261,7 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"fk_server" : server_id})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"fk_server" : server_id})
 
         # Check if the query passed
         if result.get("passed"):
@@ -295,7 +298,7 @@ class Note(Table):
         query = f"SELECT * FROM {Note.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"fk_server" : server_id, "title" : note_title})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"fk_server" : server_id, "title" : note_title})
 
         # Check if the query passed
         if result.get("passed"):
@@ -333,7 +336,7 @@ class Note(Table):
         query = f"UPDATE {Note.TABLE} SET {set} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_note" : note_id, "title" : new_title, "text" : new_text})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"id_note" : note_id, "title" : new_title, "text" : new_text})
 
         # Return the result
         return result
@@ -365,7 +368,7 @@ class Note(Table):
         query = f"DELETE FROM {Note.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_note" : id_note})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"id_note" : id_note})
 
         # Return the result
         return result
@@ -397,7 +400,7 @@ class Note(Table):
         query = f"DELETE FROM {Note.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"fk_noteList" : note_list_id})
+        result = await Database.get_instance(Note.DATABASE).bind_exec(query, {"fk_noteList" : note_list_id})
 
         # Return the result
         return result

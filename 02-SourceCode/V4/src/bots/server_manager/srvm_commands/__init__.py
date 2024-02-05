@@ -7,7 +7,7 @@ from .notes.AddNote import AddNote
 
 from .Create import Create
 from .notes.CreateNoteList import CreateNoteList
-from .channels.CreatePrivateChannel import CreatePrivateChannel
+from .channels.CreateSpecialChannel import CreateSpecialChannel
 
 from .Get import Get
 from .files.GetFile import GetFile

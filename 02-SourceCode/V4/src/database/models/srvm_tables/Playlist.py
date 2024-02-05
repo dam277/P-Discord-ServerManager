@@ -2,6 +2,8 @@ from mysql.connector.cursor import MySQLCursor
 from ...Database import Database
 from ..Table import Table
 
+from ....utils.enums.Databases import Databases
+
 from typing import Union
 
 class Playlist(Table):
@@ -27,6 +29,7 @@ class Playlist(Table):
     fk_server = None        # Foreign key of server
 
     TABLE = "playlist"      # Name of the table
+    DATABASE = Databases.server_manager # Database of the server table
 
     def __init__(self, id: int, name: str, description: str, fk_file: int, fk_server: int):
         """ # Class constructor of Playlist object 
@@ -82,7 +85,7 @@ class Playlist(Table):
         query = f"SELECT * FROM {Playlist.TABLE};"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance(Playlist.DATABASE).simple_exec(query)
 
         # Check if the query passed
         if result.get("passed"):
@@ -118,7 +121,7 @@ class Playlist(Table):
         query = f"SELECT * FROM {Playlist.TABLE} WHERE {where};"
         
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_playlist" : id_playlist})
+        result = await Database.get_instance(Playlist.DATABASE).bind_exec(query, {"id_playlist" : id_playlist})
 
         # Check if the query passed
         if result.get("passed"):
@@ -154,7 +157,7 @@ class Playlist(Table):
         query = f"SELECT * FROM {Playlist.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"name" : name})
+        result = await Database.get_instance(Playlist.DATABASE).bind_exec(query, {"name" : name})
 
         # Check if the query passed
         if result.get("passed"):

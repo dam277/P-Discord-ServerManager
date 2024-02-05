@@ -1,6 +1,8 @@
 import mysql.connector as connector
 from mysql.connector.cursor import MySQLCursor
 
+from src.utils.enums.Databases import Databases
+
 from ..utils.logger.Logger import Logger, LogDefinitions
 
 class Database:
@@ -15,6 +17,7 @@ class Database:
         src.database.Database.py\n
         Database
     """
+    instances = {} # Instances of the database
     def __init__(self, configs: dict[str, str] = None):
         """ # Class constructor of database
         
@@ -46,6 +49,34 @@ class Database:
             Logger.log(LogDefinitions.SUCCESS, f"connected to the database")
         except Exception as e:
             Logger.log(LogDefinitions.ERROR, f"Exception while connecting to database : {e}")
+
+    @staticmethod
+    def get_instance(db: Databases, configs: dict[str, str] = None) -> "Database":
+        """ # get_instance function
+        @staticmethod
+        
+        Description :
+        ---
+            Get the instance of the Database and create a new if doesn't exist
+        
+        Access : 
+        ---
+            src.database.Database.py\n
+            Database.get_instance()
+
+        Parameters :
+        ---
+            - db : :class:`Databases` => The database to connect to
+            - configs : :class:`dict` => The configuration of the database
+
+        Returns : 
+        ---
+            :class:`Database.instance` => instance of the Database
+        """
+        # Create a new instance if doesn't exist
+        if not db in Database.instances:
+            Database.instances[db] = Database(configs)
+        return Database.instances[db]
     
     async def bind_exec(self, query, values) -> dict[bool, MySQLCursor|str]:
         """ # Bind database execution

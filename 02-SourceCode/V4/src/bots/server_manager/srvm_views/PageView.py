@@ -1,7 +1,7 @@
 import nextcord
 
 from ..._views.View import View
-from ....database.models.tables.Note import Note
+from ....database.models.srvm_tables.Note import Note
 
 class PageView(nextcord.ui.View, View):
     """ # PageView class

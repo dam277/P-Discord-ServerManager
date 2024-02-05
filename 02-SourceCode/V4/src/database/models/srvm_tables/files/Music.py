@@ -72,7 +72,7 @@ class Music(File):
         query = f"SELECT * FROM {Music.TABLE} {inner_join_file};"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance(Music.DATABASE).simple_exec(query)
 
         # Check if the query passed
         if result.get("passed"):
@@ -110,7 +110,7 @@ class Music(File):
         query = f"SELECT * FROM {Music.TABLE} {inner_join_file} where {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_server" : id_server})
+        result = await Database.get_instance(Music.DATABASE).bind_exec(query, {"id_server" : id_server})
 
         # Check if the query passed
         if result.get("passed"):
@@ -154,7 +154,7 @@ class Music(File):
             query = f"INSERT INTO {Music.TABLE} {fields} VALUES {params};"
 
             # Execute the query
-            result = await Database.get_instance().bind_exec(query, {"id_file" : result.get("id")})
+            result = await Database.get_instance(Music.DATABASE).bind_exec(query, {"id_file" : result.get("id")})
 
         # Return the result
         return result
@@ -186,7 +186,7 @@ class Music(File):
         query = f"DELETE FROM {Music.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_file" : id_file})
+        result = await Database.get_instance(Music.DATABASE).bind_exec(query, {"id_file" : id_file})
 
         # Check if the query passed
         if result.get("passed"):

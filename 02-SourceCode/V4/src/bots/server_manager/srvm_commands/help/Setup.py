@@ -1,11 +1,13 @@
 import nextcord
 from nextcord.ext import commands
 
+from src.bots.Bot import Bot
+
 from .....utils.enums.permissions.DiscordPermissions import DiscordPermissions
 
 from ...._commands.Command import Command
 
-from .....database.models.tables.Server import Server
+from .....database.models.srvm_tables.Server import Server
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 

@@ -6,8 +6,8 @@ from ....server_manager.srvm_views.ConfirmationView import ConfirmationView
 from ...._commands.Command import Command
 from ..Delete import Delete
 
-from .....database.models.tables.Server import Server
-from .....database.models.tables.File import File
+from .....database.models.srvm_tables.Server import Server
+from .....database.models.srvm_tables.File import File
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 

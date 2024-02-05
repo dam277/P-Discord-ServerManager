@@ -1,7 +1,11 @@
+from asyncio import Server
 import nextcord
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 
 from colorama import Fore
+
+from src.database.Database import Database
+from src.utils.enums.Databases import Databases
 
 from .._commands.Command import Command
 
@@ -53,6 +57,9 @@ class ServerManagerBot(Bot):
 
         # Set the datas into the parent
         super().__init__(command_prefix, intents, discord_token, db_name)
+
+        # Init the database
+        Database.get_instance(Databases.server_manager, self.configs)
 
         # Setup bot interactions
         self.events()
@@ -394,29 +401,29 @@ class ServerManagerBot(Bot):
             await command.execute(interaction)
         #endregion ---- Create note list command ------------------------
             
-        #region ---- Create private channel command ------------------------
-        @create.subcommand(name="private_channel", description="Create a private channel to make user create their on category")
-        async def create_private_channel(interaction: nextcord.Interaction, channel_name: str):
-            """ # Bot create private channel command
+        #region ---- Create special channel command ------------------------
+        @create.subcommand(name="special_channel", description="Create a special channel to make user create their on category")
+        async def create_special_channel(interaction: nextcord.Interaction, channel_name: str, channel_type: str):
+            """ # Bot create special channel command
             /!\\ This is a coroutine, it needs to be awaited
             
             Description :
             ---
-                Create a private channel into the discord server which will make the users able to join it and automatically create a new private category for him\n
-                This use :class:`CreatePrivateChannel` class to execute this command
+                Create a special channel into the discord server which will make the users able to join it and automatically create a new special category for him\n
+                This use :class:`CreatespecialChannel` class to execute this command
                 
             Access :
             ---
                 src.bots.server_manager.ServerManagerBot.py\n
-                ServerManagerBot.slash_commands(private_channel())
+                ServerManagerBot.slash_commands(special_channel())
             
             Parameters :
             ---
                 - interaction : :class:`nextcord.Interaction` => Interaction with the user
                 """
-            command = Commands.create_private_channel.value(interaction.guild_id, channel_name)
+            command = Commands.create_special_channel.value(interaction.guild_id, channel_name, channel_type)
             await command.execute(interaction)
-        #endregion ---- Create private channel command ------------------------
+        #endregion ---- Create special channel command ------------------------
         #endregion ==== Create commands ============================
 
         #region ==== Get commands ============================
@@ -744,6 +751,29 @@ class ServerManagerBot(Bot):
             """
             autocomplete = Autocompletes.note_autocomplete.value(current, interaction.guild.id)
             await autocomplete.execute(interaction)
+
+        @create_special_channel.on_autocomplete("channel_type")
+        async def channel_type_autocomplete(interaction: nextcord.Interaction, current: str):
+            """ Bot channel type autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the channel type subcommand
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands_channel_type_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = Autocompletes.channel_type_autocomplete.value(current, interaction.guild.id)
+            await autocomplete.execute(interaction)
         #endregion ==== Autocompletes ============================
 #region temp imports
 # from .srvm_commands.setup.Setup import Setup
@@ -757,7 +787,7 @@ class ServerManagerBot(Bot):
 # from .srvm_commands.notes.ModifyNote import ModifyNote
 # from .srvm_commands.notes.DeleteNote import DeleteNote
 # from .srvm_commands.notes.DeleteNoteList import DeleteNoteList
-# from .srvm_commands.channels.CreatePrivateChannel import CreatePrivateChannel
+# from .srvm_commands.channels.CreatespecialChannel import CreatespecialChannel
 
 # from .srvm_events.ChannelEvents import ChannelEvents
 

@@ -1,5 +1,9 @@
 from mysql.connector.cursor import MySQLCursor
+
+from ....utils.enums.Databases import Databases
+
 from ...Database import Database
+
 from ..Table import Table
 from typing import Union
 
@@ -24,6 +28,7 @@ class Server(Table):
     name = None             # Name of the server
 
     TABLE = "server"        # Name of the server table
+    DATABASE = Databases.server_manager # Database of the server table
 
     def __init__(self, id: int|None, guild_id: int|None, name: str|None):
         """ # Class constructor of Server object 
@@ -75,7 +80,7 @@ class Server(Table):
         query = f"SELECT * FROM {Server.TABLE};"
         
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance(Server.DATABASE).simple_exec(query)
 
         # Check if the query passed
         if result.get("passed"):
@@ -113,7 +118,7 @@ class Server(Table):
         query = f"INSERT INTO {Server.TABLE} {fields} VALUES {params};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"guildId" : guild_id, "name" : name})
+        result = await Database.get_instance(Server.DATABASE).bind_exec(query, {"guildId" : guild_id, "name" : name})
         
         # Return the result
         return result
@@ -146,7 +151,7 @@ class Server(Table):
         query = f"SELECT * FROM {Server.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"guildId" : guild_id})
+        result = await Database.get_instance(Server.DATABASE).bind_exec(query, {"guildId" : guild_id})
 
         # Check if the query passed
         if result.get("passed"):
@@ -182,7 +187,7 @@ class Server(Table):
         query = f"SELECT id_server FROM {Server.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"guildId" : guild_id})
+        result = await Database.get_instance(Server.DATABASE).bind_exec(query, {"guildId" : guild_id})
 
         # Check if the query passed
         if result.get("passed"):

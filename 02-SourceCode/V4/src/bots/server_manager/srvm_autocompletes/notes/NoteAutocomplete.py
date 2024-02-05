@@ -3,8 +3,8 @@ import os
 
 from ...._autocompletes.Autocomplete import Autocomplete
 
-from .....database.models.tables.Server import Server
-from .....database.models.tables.Note import Note
+from .....database.models.srvm_tables.Server import Server
+from .....database.models.srvm_tables.Note import Note
 
 class NoteAutocomplete(Autocomplete):
     """ # NoteAutocomplete autocomplete class

@@ -3,8 +3,8 @@ import nextcord
 from ...._commands.Command import Command
 from ..Modify import Modify
 
-from .....database.models.tables.Note import Note
-from .....database.models.tables.Server import Server
+from .....database.models.srvm_tables.Note import Note
+from .....database.models.srvm_tables.Server import Server
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 

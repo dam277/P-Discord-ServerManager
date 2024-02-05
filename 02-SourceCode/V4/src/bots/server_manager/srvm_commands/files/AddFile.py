@@ -8,7 +8,7 @@ from ...._commands.Command import Command
 from ..Add import Add
 from ...srvm_views.ConfirmationView import ConfirmationView
 
-from .....database.models.tables.Server import Server
+from .....database.models.srvm_tables.Server import Server
 
 from .....utils.logger.Logger import Logger, LogDefinitions
 

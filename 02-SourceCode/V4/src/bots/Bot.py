@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from src.database.Database import Database
+from src.utils.enums.Databases import Databases
 
 from ..utils.logger.Logger import Logger, LogDefinitions
 
@@ -52,9 +53,6 @@ class Bot:
         self.shared_events()
         self.shared_regular_commands()
         self.shared_slash_commands()
-
-        # Create a database instance
-        self.database = Database(self.configs)
 
     def shared_events(self):
         """ # Shared events of the bots

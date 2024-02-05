@@ -71,7 +71,7 @@ class Image(File):
         query = f"SELECT * FROM {Image.TABLE} {inner_join_file};"
 
         # Execute the query
-        result = await Database.get_instance().simple_exec(query)
+        result = await Database.get_instance(Image.DATABASE).simple_exec(query)
 
         # Check if the query passed
         if result.get("passed"):
@@ -108,7 +108,7 @@ class Image(File):
         query = f"SELECT * FROM {Image.TABLE} {inner_join_file} where {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_server" : id_server})
+        result = await Database.get_instance(Image.DATABASE).bind_exec(query, {"id_server" : id_server})
 
         # Check if the query passed
         if result.get("passed"):
@@ -155,7 +155,7 @@ class Image(File):
             file_id_result = await File.get_last_file_id()
             
             # Execute the query
-            result = await Database.get_instance().bind_exec(query, {"id_file" : file_id_result.get("value")})
+            result = await Database.get_instance(Image.DATABASE).bind_exec(query, {"id_file" : file_id_result.get("value")})
 
         # Return the result
         return result
@@ -187,7 +187,7 @@ class Image(File):
         query = f"DELETE FROM {Image.TABLE} WHERE {where};"
 
         # Execute the query
-        result = await Database.get_instance().bind_exec(query, {"id_file" : id_file})
+        result = await Database.get_instance(Image.DATABASE).bind_exec(query, {"id_file" : id_file})
 
         # Check if the query passed
         if result.get("passed"):
