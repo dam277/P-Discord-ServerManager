@@ -25,7 +25,7 @@ class StartTasks(Start):
     ---
         - Start : :class:`Start` => Parent class of tasks commands
     """
-    def __init__(self, guild: nextcord.Guild, task_name: str|None):
+    def __init__(self, guild: nextcord.Guild, interval_time: int = None, interval_unit: str = None, task_name: str = None):
         """ # StartTasks command constructor
         
         Description :
@@ -47,13 +47,15 @@ class StartTasks(Start):
             :class:`None`
         """
         self.guild = guild
+        self.interval_time = interval_time
+        self.interval_unit = interval_unit
         self.task_name = task_name
 
         super().__init__()
 
     @Command.permissions([DiscordPermissions.administrator])
-    @Command.register(name="start_tasks", description="Start all the tasks of the bot", parent="/start", task_name="[optional]name of the task to start")
-    async def execute(self, interaction: nextcord.Interaction, *args, **kwargs):
+    @Command.register(name="start_tasks", description="Start all the tasks of the bot", parent="/start", interval_time="[optional]Set a new interval for the tasks", interval_unit="[optional]Set a new unit for the tasks", task_name="[optional]name of the task to start")
+    async def execute(self, interaction: nextcord.Interaction):
         """ # StartTasks command execute method
         /!\\ This is a coroutine, it needs to be awaited
         
@@ -114,6 +116,8 @@ class StartTasks(Start):
 
             # Check if the task is running
             if task_list.get(task_code_name) and not task_list.get(task_code_name).execute.is_running():
+                if self.interval_unit and self.interval_time:
+                    task_list.get(task_code_name).change_interval(self.interval_unit, self.interval_time)
                 threading.Thread(target=task_list.get(task_code_name).start())
         
         # Start all the tasks
@@ -121,7 +125,7 @@ class StartTasks(Start):
             start_task(task)
 
         # Send the response
-        return await interaction.send(f"{task.value.get('name')} Task started") if self.task_name else await interaction.send("All tasks started")
+        return await interaction.send(f"{task.value.get('name')} Task started", ephemeral=True) if self.task_name else await interaction.send("All tasks started", ephemeral=True)
 
 
             

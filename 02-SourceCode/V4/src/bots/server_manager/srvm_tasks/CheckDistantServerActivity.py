@@ -3,6 +3,8 @@ from nextcord.ext import commands, tasks
 
 import socket
 
+from ....utils.enums.IntervalUnits import IntervalUnits
+
 from ..._tasks.Task import Task
 
 from ....utils.enums.ChannelTypes import ChannelTypes
@@ -83,8 +85,36 @@ class CheckDistantServerActivity(Task):
             :class:`None`
         """
         self.execute.cancel()
+
+    def change_interval(self, interval_unit: IntervalUnits, interval_time: int):
+        """ # CheckDistantServerActivity task change_interval method
+        
+        Description :
+        ---
+            Change the interval of the CheckDistantServerActivity task
+        
+        Access :
+        ---
+            src.bots.server_manager.srvm_tasks.CheckDistantServerActivity.py\n
+            CheckDistantServerActivity.change_interval()
+            
+        Parameters :
+        ---
+            minutes : :class:`int` => The new interval in minutes
+            
+        Returns :
+        ---
+            :class:`None`
+        """
+        match interval_unit:
+            case IntervalUnits.SECONDS.value:
+                self.execute.change_interval(seconds=interval_time)
+            case IntervalUnits.MINUTES.value:
+                self.execute.change_interval(minutes=interval_time)
+            case IntervalUnits.HOURS.value:
+                self.execute.change_interval(hours=interval_time)
     
-    @tasks.loop(seconds=5)
+    @tasks.loop(minutes=1)
     async def execute(self):
         """ # CheckDistantServerActivity task execute method
         
@@ -103,7 +133,7 @@ class CheckDistantServerActivity(Task):
         """
         # Get the server id
         server_id_result = await Server.get_server_id_by_guild_id(self.guild.id)
-        
+        print("test")
         # Check if the server exists
         if not server_id_result.get("value") or not server_id_result.get("passed"):
             return 

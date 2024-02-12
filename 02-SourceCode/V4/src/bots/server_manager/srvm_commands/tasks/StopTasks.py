@@ -1,7 +1,5 @@
 import nextcord
 
-import threading
-
 from .....utils.enums.permissions.DiscordPermissions import DiscordPermissions
 
 from .....utils.enums.Tasks import Tasks
@@ -53,7 +51,7 @@ class StopTasks(Stop):
 
     @Command.permissions([DiscordPermissions.administrator])
     @Command.register(name="stop_tasks", description="stop all the tasks of the bot", parent="/stop", task_name="[optional]name of the task to stop")
-    async def execute(self, interaction: nextcord.Interaction, *args, **kwargs):
+    async def execute(self, interaction: nextcord.Interaction):
         """ # StopTasks command execute method
         /!\\ This is a coroutine, it needs to be awaited
         
@@ -99,7 +97,7 @@ class StopTasks(Stop):
                 task_list.get(task_code_name).stop()
 
         # Send the response
-        return await interaction.send(f"{task.value.get('name')} Task stopped") if self.task_name else await interaction.send("All tasks stopped")
+        return await interaction.send(f"{task.value.get('name')} Task stopped", ephemeral=True) if self.task_name else await interaction.send("All tasks stopped", ephemeral=True)
 
 
             

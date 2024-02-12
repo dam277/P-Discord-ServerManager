@@ -1,16 +1,10 @@
-from asyncio import Server
 import nextcord
-from nextcord.ext import commands, tasks
 
 from colorama import Fore
 from src.bots.server_manager.srvm_tasks.CheckDistantServerActivity import CheckDistantServerActivity
 
 from src.database.Database import Database
 from src.utils.enums.Databases import Databases
-
-from .._commands.Command import Command
-
-from .._tasks.Task import Task
 
 from ..Bot import Bot
 from ...utils.logger.Logger import Logger, LogDefinitions
@@ -767,7 +761,7 @@ class ServerManagerBot(Bot):
             
         #region ---- Start tasks check command ------------------------
         @start.subcommand(name="tasks", description="start the tasks")
-        async def start_tasks(interaction: nextcord.Interaction, task_name: str = None):
+        async def start_tasks(interaction: nextcord.Interaction, interval_time: int = None, interval_unit: str = None, task_name: str = None):
             """ Bot start tasks check subcommand 
             /!\\ This is a coroutine, it needs to be awaited
 
@@ -790,7 +784,7 @@ class ServerManagerBot(Bot):
             ---
                 :class:`None`
             """
-            command = Commands.start_tasks.value(interaction.guild, task_name)
+            command = Commands.start_tasks.value(interaction.guild, interval_time, interval_unit, task_name)
             await command.execute(interaction)
         #endregion ---- Start tasks check command ------------------------
         #endregion ==== Start commands ============================
@@ -992,5 +986,28 @@ class ServerManagerBot(Bot):
                 :class:`None`
             """
             autocomplete = Autocompletes.task_autocomplete.value(current)
+            await autocomplete.execute(interaction)
+
+        @start_tasks.on_autocomplete("interval_unit")
+        async def interval_unit_autocomplete(interaction: nextcord.Interaction, current: str):
+            """ Bot interval unit autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the interval unit subcommand
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(interval_unit_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = Autocompletes.interval_unit_autocomplete.value(current)
             await autocomplete.execute(interaction)
         #endregion ==== Autocompletes ============================

@@ -1,3 +1,4 @@
+from ...utils.enums.IntervalUnits import IntervalUnits
 from ..Base import Base
 import nextcord
 from nextcord.ext import commands, tasks
@@ -108,6 +109,29 @@ class Task(Base):
             interation : :class:`nextcord.Interaction`
 
         Returns : 
+        ---
+            :class:`None`
+        """
+        pass
+    
+    def change_interval(self, interval_unit: IntervalUnits, interval_time: int):
+        """ # Task change_interval method
+        
+        Description :
+        ---
+            Change the interval of the Task
+            
+        Access :
+        ---
+            src.bots.server_manager.Tasks.Task.py\n
+            Task.change_interval()
+        
+        Parameters :
+        ---
+            - interval_unit : :class:`str` => The new interval unit
+            - interval_time : :class:`int` => The new interval time
+            
+        Returns :
         ---
             :class:`None`
         """
