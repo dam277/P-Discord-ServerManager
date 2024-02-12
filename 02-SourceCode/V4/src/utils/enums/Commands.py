@@ -1,6 +1,6 @@
 from enum import Enum
 
-from ...bots.server_manager.srvm_commands import Setup, Help, Add, AddFile, AddNote, Create, CreateNoteList, CreateSpecialChannel, Get, GetFile, GetNoteList, Delete, DeleteFile, DeleteNote, DeleteNoteList, Modify, ModifyNote
+from ...bots.server_manager.srvm_commands import Setup, Help, Add, AddFile, AddNote, AddDistantServer, Create, CreateNoteList, CreateSpecialChannel, Get, GetFile, GetNoteList, Delete, DeleteFile, DeleteNote, DeleteNoteList, DeleteDistantServer, Modify, ModifyNote
 
 class Commands(Enum):
     setup = Setup
@@ -8,6 +8,7 @@ class Commands(Enum):
     add = Add
     add_file = AddFile
     add_note = AddNote
+    add_distant_server = AddDistantServer
     create = Create
     create_note_list = CreateNoteList
     create_special_channel = CreateSpecialChannel
@@ -18,5 +19,6 @@ class Commands(Enum):
     delete_file = DeleteFile
     delete_note = DeleteNote
     delete_note_list = DeleteNoteList
+    delete_distant_server = DeleteDistantServer
     modify = Modify
     modify_note = ModifyNote

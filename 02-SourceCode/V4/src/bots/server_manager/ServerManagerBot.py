@@ -349,6 +349,33 @@ class ServerManagerBot(Bot):
             command = Commands.add_note.value(title, text, note_list_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ----------------------------
+            
+        #region ---- Add distant server command ------------------------
+        @add.subcommand(name="distant_server", description="Add a distant server to the server")
+        async def add_distant_server(interaction: nextcord.Interaction, server_adress: str, server_port: int):
+            """ Bot add distant server subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Add a distant server to the server\n
+                This command is a subcommand of the add command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(add_distant_server())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.add_distant_server.value(server_adress, server_port, interaction.guild.id)
+            await command.execute(interaction)
         #endregion ==== Add commands ============================
             
         #region ==== Create commands ============================
@@ -775,23 +802,3 @@ class ServerManagerBot(Bot):
             autocomplete = Autocompletes.channel_type_autocomplete.value(current, interaction.guild.id)
             await autocomplete.execute(interaction)
         #endregion ==== Autocompletes ============================
-#region temp imports
-# from .srvm_commands.setup.Setup import Setup
-# from .srvm_commands.help.GetCommands import GetCommands
-# from .srvm_commands.files.AddFile import AddFile
-# from .srvm_commands.files.DeleteFile import DeleteFile 
-# from .srvm_commands.files.GetFile import GetFile 
-# from .srvm_commands.notes.CreateNoteList import CreateNoteList 
-# from .srvm_commands.notes.GetNoteList import GetNoteList 
-# from .srvm_commands.notes.AddNote import AddNote 
-# from .srvm_commands.notes.ModifyNote import ModifyNote
-# from .srvm_commands.notes.DeleteNote import DeleteNote
-# from .srvm_commands.notes.DeleteNoteList import DeleteNoteList
-# from .srvm_commands.channels.CreatespecialChannel import CreatespecialChannel
-
-# from .srvm_events.ChannelEvents import ChannelEvents
-
-# from .srvm_autocompletes.files.FileAutocomplete import FileAutocomplete
-# from .srvm_autocompletes.notes.NotelistAutocomplete import NotelistAutocomplete
-# from .srvm_autocompletes.notes.NoteAutocomplete import NoteAutocomplete
-#endregion temp imports

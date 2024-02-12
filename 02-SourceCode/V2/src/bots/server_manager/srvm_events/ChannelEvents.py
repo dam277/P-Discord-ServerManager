@@ -45,7 +45,7 @@ class ChannelEvents(Event):
         self.channel = channel
         super().__init__()
 
-    async def on_guild_channel_delete(self):
+    async def on_guild_channel_delete(self): 
         """ # On guild channel delete event
         /!\\ This is a coroutine, it needs to be awaited
         

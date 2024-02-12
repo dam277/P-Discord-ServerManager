@@ -79,7 +79,7 @@ class File(Table):
         """
         # Get the query string
         query = f"SELECT * FROM {File.TABLE};"
-
+        
         # Execute the query
         result = await Database.get_instance(File.DATABASE).simple_exec(query)
 
