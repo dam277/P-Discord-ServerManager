@@ -1,3 +1,4 @@
+from os import name
 import nextcord
 from nextcord.ext import commands, tasks
 
@@ -133,7 +134,7 @@ class CheckDistantServerActivity(Task):
         """
         # Get the server id
         server_id_result = await Server.get_server_id_by_guild_id(self.guild.id)
-        print("test")
+        
         # Check if the server exists
         if not server_id_result.get("value") or not server_id_result.get("passed"):
             return 
@@ -152,6 +153,7 @@ class CheckDistantServerActivity(Task):
         if not distant_servers_result.get("objects") or not distant_servers_result.get("passed"):
             return
         
+        @Task.trigger(name="isOpen")
         def isOpen(adress: str, port: int = 8080):
             """ # isOpen function
             
