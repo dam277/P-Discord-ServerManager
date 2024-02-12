@@ -1,37 +1,39 @@
 import nextcord
 import os
 
+from .....database.models.srvm_tables.DistantServer import DistantServer
+
 from ...._autocompletes.Autocomplete import Autocomplete
 
 from .....database.models.srvm_tables.Server import Server
-from .....database.models.srvm_tables.Note import Note
+from .....database.models.srvm_tables.ChannelType import ChannelType
 
-class NoteAutocomplete(Autocomplete):
-    """ # NoteAutocomplete autocomplete class
+class DistantServerAutocomplete(Autocomplete):
+    """ # DistantServerAutocomplete autocomplete class
     
     Description :
     ---
-        Manage the NoteAutocomplete discord autocomplete
+        Manage the DistantServerAutocomplete discord autocomplete
         
     Access :
     ---
-        src.bots.server_manager.srvm_autocompletes.notes.NoteAutocomplete.py\n
-        NoteAutocomplete
+        src.bots.server_manager.srvm_autocompletes.ChannelTypes.DistantServerAutocomplete.py\n
+        DistantServerAutocomplete
         
     inheritance :
     ---
         - autocomplete : :class:`autocomplete` => Parent class of database autocompletes"""
     def __init__(self, current: str, guild_id: int):
-        """ # NoteAutocomplete autocomplete constructor
+        """ # DistantServerAutocomplete autocomplete constructor
         
         Description :
         ---
-            Construct a NoteAutocomplete autocomplete object
+            Construct a DistantServerAutocomplete autocomplete object
             
         Access :
         ---
-            src.bots.server_manager.srvm_autocompletes.notes.NoteAutocomplete.py\n
-            NoteAutocomplete.__init__()
+            src.bots.server_manager.srvm_autocompletes.ChannelTypes.DistantServerAutocomplete.py\n
+            DistantServerAutocomplete.__init__()
         
         Parameters :
         ---
@@ -56,8 +58,8 @@ class NoteAutocomplete(Autocomplete):
             
         Access :
         ---
-            src.bots.server_manager.srvm_autocompletes.notes.NoteAutocomplete.py\n
-            NoteAutocomplete.execute()
+            src.bots.server_manager.srvm_autocompletes.ChannelTypes.DistantServerAutocomplete.py\n
+            DistantServerAutocomplete.execute()
         
         Parameters :
         ---
@@ -67,16 +69,13 @@ class NoteAutocomplete(Autocomplete):
         ---
             :class:`None`
         """
-        # Get the server id
-        server_id_result = await Server.get_server_id_by_guild_id(self.guild_id)
+        # Get the ChannelType list
+        distant_servers_result = await DistantServer.get_distant_servers_by_guild_id(self.guild_id)
 
-        # Check if the server exists
-        if server_id_result.get("value"):
-            # Get the notelists
-            notes_result = await Note.get_notes_in_notelists_by_server_id(server_id_result.get("value"))
-            
+        # Check if the result is empty
+        if distant_servers_result.get("objects"):
             # Execute the autocomplete
-            await super().execute(interaction, notes_result.get("objects"), ["title"])
+            await super().execute(interaction, distant_servers_result.get("objects"), ["adress", "port"], ":")
             return
         
         # Send empty autocomplete

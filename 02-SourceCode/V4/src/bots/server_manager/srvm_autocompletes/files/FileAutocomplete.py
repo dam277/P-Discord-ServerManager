@@ -91,7 +91,7 @@ class FileAutocomplete(Autocomplete):
             files_result = await request(server_id_result.get("value"))
             
             # Execute the autocomplete
-            await super().execute(interaction, files_result.get("objects"), "name")
+            await super().execute(interaction, files_result.get("objects"), ["name"])
             return
         
         # Send empty autocomplete

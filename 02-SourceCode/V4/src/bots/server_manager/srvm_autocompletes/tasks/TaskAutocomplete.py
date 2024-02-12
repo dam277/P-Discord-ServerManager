@@ -1,37 +1,35 @@
 import nextcord
-import os
+
+from .....utils.enums.Tasks import Tasks
 
 from ...._autocompletes.Autocomplete import Autocomplete
 
-from .....database.models.srvm_tables.Server import Server
-from .....database.models.srvm_tables.Note import Note
-
-class NoteAutocomplete(Autocomplete):
-    """ # NoteAutocomplete autocomplete class
+class TaskAutocomplete(Autocomplete):
+    """ # TaskAutocomplete autocomplete class
     
     Description :
     ---
-        Manage the NoteAutocomplete discord autocomplete
+        Manage the TaskAutocomplete discord autocomplete
         
     Access :
     ---
-        src.bots.server_manager.srvm_autocompletes.notes.NoteAutocomplete.py\n
-        NoteAutocomplete
+        src.bots.server_manager.srvm_autocompletes.ChannelTypes.TaskAutocomplete.py\n
+        TaskAutocomplete
         
     inheritance :
     ---
         - autocomplete : :class:`autocomplete` => Parent class of database autocompletes"""
-    def __init__(self, current: str, guild_id: int):
-        """ # NoteAutocomplete autocomplete constructor
+    def __init__(self, current: str):
+        """ # TaskAutocomplete autocomplete constructor
         
         Description :
         ---
-            Construct a NoteAutocomplete autocomplete object
+            Construct a ChannelTypeAutocomplete autocomplete object
             
         Access :
         ---
-            src.bots.server_manager.srvm_autocompletes.notes.NoteAutocomplete.py\n
-            NoteAutocomplete.__init__()
+            src.bots.server_manager.srvm_autocompletes.ChannelTypes.ChannelTypeAutocomplete.py\n
+            ChannelTypeAutocomplete.__init__()
         
         Parameters :
         ---
@@ -42,7 +40,6 @@ class NoteAutocomplete(Autocomplete):
         ---
             :class:`None`
         """
-        self.guild_id = guild_id
 
         super().__init__(current)
 
@@ -56,8 +53,8 @@ class NoteAutocomplete(Autocomplete):
             
         Access :
         ---
-            src.bots.server_manager.srvm_autocompletes.notes.NoteAutocomplete.py\n
-            NoteAutocomplete.execute()
+            src.bots.server_manager.srvm_autocompletes.ChannelTypes.ChannelTypeAutocomplete.py\n
+            ChannelTypeAutocomplete.execute()
         
         Parameters :
         ---
@@ -67,16 +64,13 @@ class NoteAutocomplete(Autocomplete):
         ---
             :class:`None`
         """
-        # Get the server id
-        server_id_result = await Server.get_server_id_by_guild_id(self.guild_id)
-
-        # Check if the server exists
-        if server_id_result.get("value"):
-            # Get the notelists
-            notes_result = await Note.get_notes_in_notelists_by_server_id(server_id_result.get("value"))
-            
+        # Get the tasks
+        tasks_list = Tasks.get_all()
+        
+        # Check if the result is empty
+        if tasks_list:
             # Execute the autocomplete
-            await super().execute(interaction, notes_result.get("objects"), ["title"])
+            await super().execute(interaction, tasks_list)
             return
         
         # Send empty autocomplete

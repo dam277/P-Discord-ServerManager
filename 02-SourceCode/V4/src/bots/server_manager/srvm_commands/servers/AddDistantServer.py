@@ -1,4 +1,3 @@
-from re import A
 import nextcord
 
 from ..Add import Add

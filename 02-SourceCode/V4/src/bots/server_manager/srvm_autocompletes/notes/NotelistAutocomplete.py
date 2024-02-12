@@ -76,7 +76,7 @@ class NotelistAutocomplete(Autocomplete):
             notelists_result = await NoteList.get_notelists_by_server_id(server_id_result.get("value"))
             
             # Execute the autocomplete
-            await super().execute(interaction, notelists_result.get("objects"), "name")
+            await super().execute(interaction, notelists_result.get("objects"), ["name"])
             return
         
         # Send empty autocomplete

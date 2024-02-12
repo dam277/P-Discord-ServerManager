@@ -3,17 +3,21 @@ import nextcord
 from nextcord.ext import commands, tasks
 
 from colorama import Fore
+from src.bots.server_manager.srvm_tasks.CheckDistantServerActivity import CheckDistantServerActivity
 
 from src.database.Database import Database
 from src.utils.enums.Databases import Databases
 
 from .._commands.Command import Command
 
+from .._tasks.Task import Task
+
 from ..Bot import Bot
 from ...utils.logger.Logger import Logger, LogDefinitions
 from ...utils.enums.Commands import Commands
 from ...utils.enums.Events import Events
 from ...utils.enums.Autocompletes import Autocompletes
+from ...utils.enums.Tasks import Tasks
 
 class ServerManagerBot(Bot):
     """ # Server manager bot class
@@ -57,7 +61,7 @@ class ServerManagerBot(Bot):
 
         # Set the datas into the parent
         super().__init__(command_prefix, intents, discord_token, db_name)
-
+        
         # Init the database
         Database.get_instance(Databases.server_manager, self.configs)
 
@@ -376,6 +380,8 @@ class ServerManagerBot(Bot):
             """
             command = Commands.add_distant_server.value(server_adress, server_port, interaction.guild.id)
             await command.execute(interaction)
+        #endregion ----------------------------
+
         #endregion ==== Add commands ============================
             
         #region ==== Create commands ============================
@@ -703,8 +709,147 @@ class ServerManagerBot(Bot):
             command = Commands.delete_note_list.value(note_list_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ---- Delete note list command ------------------------
+        #region ---- Delete note list command ------------------------
+        @delete.subcommand(name="distant_server", description="Delete a distant_server")
+        async def delete_distant_server(interaction: nextcord.Interaction, adress_port: str):
+            """ Bot delete distant_server subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Delete a distant_server to the server\n
+                This command is a subcommand of the delete command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(delete_distant_server())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - name : :class:`str` => Name of the distant_server to delete
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.delete_distant_server.value(adress_port, interaction.guild.id)
+            await command.execute(interaction)
+        #endregion ---- Delete note list command ------------------------
         #endregion ==== Delete commands ============================
 
+        #region ==== Start commands ============================
+        @self.bot_instance.slash_command(name="start", description="Start something from the server")
+        async def start(interaction: nextcord.Interaction):
+            """ # Bot Start command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Start something from the server\n
+                This command is a parent command for the subcommands
+            
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(Start())
+            
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns : 
+            ---
+                :class:`None`
+            """
+            pass
+            
+        #region ---- Start tasks check command ------------------------
+        @start.subcommand(name="tasks", description="start the tasks")
+        async def start_tasks(interaction: nextcord.Interaction, task_name: str = None):
+            """ Bot start tasks check subcommand 
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Check the activity of the tasks\n
+                This command is a subcommand of the start command
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(start_tasks())
+
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - task_name : :class:`str` => Name of the task to start
+
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.start_tasks.value(interaction.guild, task_name)
+            await command.execute(interaction)
+        #endregion ---- Start tasks check command ------------------------
+        #endregion ==== Start commands ============================
+            
+        #region ==== Stop commands ============================
+        @self.bot_instance.slash_command(name="stop", description="stop something from the server")
+        async def stop(interaction: nextcord.Interaction):
+            """ # Bot stop command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                stop something from the server\n
+                This command is a parent command for the subcommands
+            
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(stop())
+            
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns : 
+            ---
+                :class:`None`
+            """
+            pass
+
+        #region ---- stop tasks check command ------------------------
+        @stop.subcommand(name="tasks", description="stop the tasks")
+        async def stop_tasks(interaction: nextcord.Interaction, task_name: str = None):
+            """" # Bot stop tasks check subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Stop the activity of the tasks\n
+                This command is a subcommand of the stop command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(stop_tasks())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.stop_tasks.value(interaction.guild, task_name)
+            await command.execute(interaction)
+        #endregion ---- stop tasks check command ------------------------
+        #endregion ==== stop commands ============================
+        
         #region ==== Autocompletes ============================
         @get_file.on_autocomplete("file_name")
         @create_note_list.on_autocomplete("file_name")
@@ -791,7 +936,7 @@ class ServerManagerBot(Bot):
             Access :
             ---
                 src.bots.server_manager.ServerManagerBot.py\n
-                ServerManagerBot.slash_commands_channel_type_autocomplete())
+                ServerManagerBot.slash_commands(channel_type_autocomplete())
 
             Parameters:
                 interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
@@ -800,5 +945,52 @@ class ServerManagerBot(Bot):
                 :class:`None`
             """
             autocomplete = Autocompletes.channel_type_autocomplete.value(current, interaction.guild.id)
+            await autocomplete.execute(interaction)
+
+        @delete_distant_server.on_autocomplete("adress_port")
+        async def distant_server_autocomplete(interaction: nextcord.Interaction, current: str):
+            """ Bot distant server autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the distant server subcommand
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(distant_server_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = Autocompletes.distant_server_autocomplete.value(current, interaction.guild.id)
+            await autocomplete.execute(interaction)
+
+        @start_tasks.on_autocomplete("task_name")
+        @stop_tasks.on_autocomplete("task_name")
+        async def task_autocomplete(interaction: nextcord.Interaction, current: str):
+            """ Bot task autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the task subcommand
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(task_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = Autocompletes.task_autocomplete.value(current)
             await autocomplete.execute(interaction)
         #endregion ==== Autocompletes ============================

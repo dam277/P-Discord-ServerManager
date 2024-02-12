@@ -73,7 +73,7 @@ class ChannelTypeAutocomplete(Autocomplete):
         # Check if the result is empty
         if channelTypes_result.get("objects"):
             # Execute the autocomplete
-            await super().execute(interaction, channelTypes_result.get("objects"), "name")
+            await super().execute(interaction, channelTypes_result.get("objects"), ["name"])
             return
         
         # Send empty autocomplete

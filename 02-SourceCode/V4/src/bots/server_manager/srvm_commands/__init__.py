@@ -22,3 +22,9 @@ from .servers.DeleteDistantServer import DeleteDistantServer
 
 from .Modify import Modify
 from .notes.ModifyNote import ModifyNote
+
+from .Start import Start
+from .tasks.StartTasks import StartTasks
+
+from .Stop import Stop
+from .tasks.StopTasks import StopTasks

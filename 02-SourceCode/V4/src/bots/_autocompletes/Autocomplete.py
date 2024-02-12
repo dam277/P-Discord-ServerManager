@@ -1,4 +1,4 @@
-import json
+from discord import Object
 import nextcord
 
 from ..Base import Base
@@ -20,7 +20,7 @@ class Autocomplete(Base):
         
         super().__init__()
 
-    async def execute(self, interaction: nextcord.Interaction, objects: list, attribute: str):
+    async def execute(self, interaction: nextcord.Interaction, objects: list, attributes: str = None, separator: str = "-"):
         """ # Execute autocomplete function
         /!\\ This is a coroutine, it needs to be awaited
         
@@ -45,9 +45,12 @@ class Autocomplete(Base):
         # Set the default value
         values = []
 
-        # Check if the objects exists
+        # Check if the objects exists and join the attributes to create the name
         if objects:
-            values = [getattr(object, attribute)[:100] for object in objects if self.current.lower() in getattr(object, attribute).lower()][:25]
+            for object in objects:
+                name = "".join((str(getattr(object, attribute)).lower() + separator) for attribute in attributes)[:-1] if attributes else str(object).lower()
+                if self.current.lower() in name:
+                    values.append(name)
 
         # Send the autocomplete
         await interaction.response.send_autocomplete(values)
