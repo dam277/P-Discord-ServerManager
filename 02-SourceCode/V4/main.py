@@ -30,8 +30,6 @@ def main():
     srvm_bot = ServerManagerBot(srvm_token, srvm_db_name)
     srvm_bot.run()
 
-    # Create a server loader bot
-
 # Main function call
 if __name__ == '__main__':
     main()
