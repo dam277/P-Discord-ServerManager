@@ -1,7 +1,8 @@
+from ctypes import Union
+import string
 import nextcord
 
 from colorama import Fore
-from src.bots.server_manager.srvm_tasks.CheckDistantServerActivity import CheckDistantServerActivity
 
 from src.database.Database import Database
 from src.utils.enums.Databases import Databases
@@ -321,7 +322,7 @@ class ServerManagerBot(Bot):
         #endregion ---- Add file command ------------------------
             
         #region ---- Add note command ------------------------
-        @add.subcommand(name="note", description="Add a note to a notelist")
+        @add.subcommand(name="note", description="Add a note to a playlist")
         async def add_note(interaction: nextcord.Interaction, title: str, text: str, note_list_name: str):
             """ Bot add note subcommand
             /!\\ This is a coroutine, it needs to be awaited
@@ -373,6 +374,34 @@ class ServerManagerBot(Bot):
                 :class:`None`
             """
             command = Commands.add_distant_server.value(server_adress, server_port, interaction.guild.id)
+            await command.execute(interaction)
+        #endregion ----------------------------
+
+        #region ---- Add music to playlist command ------------------------
+        @add.subcommand(name="music_to_playlist", description="Add a music to a playlist")
+        async def add_music_to_playlist(interaction: nextcord.Interaction, file_name: str, playlist_name: str):
+            """ Bot add music subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Add a music to a playlist\n
+                This command is a subcommand of the add command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(add_music())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.add_music_to_playlist.value(file_name, playlist_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ----------------------------
 
@@ -451,6 +480,30 @@ class ServerManagerBot(Bot):
             command = Commands.create_special_channel.value(interaction.guild_id, channel_name, channel_type)
             await command.execute(interaction)
         #endregion ---- Create special channel command ------------------------
+            
+        #region ---- Create playlist command ------------------------
+        @create.subcommand(name="playlist", description="Create a playlist")
+        async def create_playlist(interaction: nextcord.Interaction, playlist_name: str, description: str, file_name: str|None):
+            """ # Bot create playlist command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Create a playlist\n
+                This use :class:`CreatePlaylist` class to execute this command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(create_playlist())
+            
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                """
+            command = Commands.create_playlist.value(playlist_name, description, file_name, interaction.guild_id)
+            await command.execute(interaction) 
+        #endregion ---- Create playlist command ------------------------
         #endregion ==== Create commands ============================
 
         #region ==== Get commands ============================
@@ -507,6 +560,7 @@ class ServerManagerBot(Bot):
             command = Commands.get_file.value(file_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ---- Get file command ------------------------
+            
         #region ---- Get note list command ------------------------
         @get.subcommand(name="notelist", description="Get a notelist")
         async def get_notelist(interaction: nextcord.Interaction, note_list_name: str):
@@ -535,6 +589,36 @@ class ServerManagerBot(Bot):
             command = Commands.get_note_list.value(note_list_name, interaction.guild.id)
             await command.execute(interaction)
         #endregion ---- Get note list command ------------------------
+            
+        #region ---- Get playlist command ------------------------
+        @get.subcommand(name="playlist", description="Get a playlist")
+        async def get_playlist(interaction: nextcord.Interaction, playlist_name: str):
+            """ Bot get playlist subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Get a playlist to the server\n
+                This command is a subcommand of the get command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(get_playlist())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - name : :class:`str` => Name of the playlist to get
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.get_playlist.value(playlist_name, interaction.guild.id)
+            await command.execute(interaction)
+        #endregion ---- Get playlist command ------------------------
+        
         #endregion ==== Get commands ============================
 
         #region ==== Modify commands ============================
@@ -844,10 +928,97 @@ class ServerManagerBot(Bot):
         #endregion ---- stop tasks check command ------------------------
         #endregion ==== stop commands ============================
         
+        #region ==== Private channel commands ============================
+        @self.bot_instance.slash_command(name="pv", description="Manage the private channels")
+        async def pv(interaction: nextcord.Interaction):
+            """ # Bot private channel command
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Manage the private channels\n
+                This command is a parent command for the subcommands
+            
+            Access : 
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(private_channel())
+            
+            Parameters : 
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+            
+            Returns : 
+            ---
+                :class:`None`
+            """
+            pass
+
+        #region ---- pv open command ------------------------
+        @pv.subcommand(name="open", description="Open a private channel")
+        async def pv_open(interaction: nextcord.Interaction, user: nextcord.User):
+            """ Bot pv open subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Open a private channel\n
+                This command is a subcommand of the pv command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(pv_open())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - channel_name : :class:`str` => Name of the private channel to open
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.pv_open.value(user)
+            await command.execute(interaction)
+        #endregion ---- pv open command ------------------------
+            
+        #region ---- pv close command ------------------------
+        @pv.subcommand(name="close", description="Close a private channel")
+        async def pv_close(interaction: nextcord.Interaction, user: nextcord.User):
+            """ Bot pv close subcommand
+            /!\\ This is a coroutine, it needs to be awaited
+            
+            Description :
+            ---
+                Close a private channel\n
+                This command is a subcommand of the pv command
+                
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands(pv_close())
+                
+            Parameters :
+            ---
+                - interaction : :class:`nextcord.Interaction` => Interaction with the user
+                - channel_name : :class:`str` => Name of the private channel to close
+            
+            Returns :
+            ---
+                :class:`None`
+            """
+            command = Commands.pv_close.value(user)
+            await command.execute(interaction)
+        #endregion ---- pv close command ------------------------
+        #endregion ==== Private channel commands ============================
+            
         #region ==== Autocompletes ============================
         @get_file.on_autocomplete("file_name")
         @create_note_list.on_autocomplete("file_name")
         @delete_file.on_autocomplete("file_name")
+        @create_playlist.on_autocomplete("file_name")
+        @add_music_to_playlist.on_autocomplete("file_name")
         async def file_autocomplete(interaction: nextcord.Interaction, current: str):
             """ # Bot file autocomplete
             /!\\ This is a coroutine, it needs to be awaited
@@ -892,6 +1063,30 @@ class ServerManagerBot(Bot):
                 :class:`None`
             """
             autocomplete = Autocompletes.notelist_autocomplete.value(current, interaction.guild.id)
+            await autocomplete.execute(interaction)
+
+        @add_music_to_playlist.on_autocomplete("playlist_name")
+        @get_playlist.on_autocomplete("playlist_name")
+        async def playlist_autocomplete(interaction: nextcord.Interaction, current: str):
+            """ Bot note autocomplete function
+            /!\\ This is a coroutine, it needs to be awaited
+
+            Description :
+            ---
+                Autocomplete function for the notes and playlists subcommands
+            
+            Access :
+            ---
+                src.bots.server_manager.ServerManagerBot.py\n
+                ServerManagerBot.slash_commands_note_autocomplete())
+
+            Parameters:
+                interaction :class:`nextcord.Interaction`: The interaction object representing the user's interaction with the bot.
+            
+            Returns:
+                :class:`None`
+            """
+            autocomplete = Autocompletes.playlist_autocomplete.value(current, interaction.guild.id)
             await autocomplete.execute(interaction)
         
         @delete_note.on_autocomplete("note_title")

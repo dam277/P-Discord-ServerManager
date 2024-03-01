@@ -48,7 +48,7 @@ class Image(File):
         super().__init__(id, name, path, fk_server)
 
     @staticmethod
-    async def get_all_images() -> dict[bool, Union[list["Image"], str]]:
+    async def get_all_files() -> dict[bool, Union[list["Image"], str]]:
         """ # Get all Image function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -60,7 +60,7 @@ class Image(File):
         Access : 
         ---
             src.database.models.tables.files.image.py\n
-            Image.get_all_Images()
+            Image.get_all_files()
 
         Returns : 
         ---

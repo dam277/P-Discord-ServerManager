@@ -166,6 +166,148 @@ class Playlist(Table):
             return result
         
     @staticmethod
+    async def get_playlists_by_server_id(id_server: int) -> dict[bool, Union[list["Playlist"], str]]:
+        """ # Get Playlist by server id function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get a list of Playlists using the server id
+        
+        Access : 
+        ---
+            src.database.models.tables.Playlist.py\n
+            Playlist.get_Playlists_by_server_id()
+
+        Parameters : 
+        ---
+            - id_server : :class:`int` => Searched server id
+
+        Returns : 
+        ---
+            :class:`list[Playlist]` => A list of Playlists got
+        """
+        where = "fk_server = %(fk_server)s"
+        query = f"SELECT * FROM {Playlist.TABLE} WHERE {where};"
+
+        # Execute the query
+        result = await Database.get_instance(Playlist.DATABASE).bind_exec(query, {"fk_server" : id_server})
+
+        # Check if the query passed
+        if result.get("passed"):
+            return Playlist.format_list_object(result.get("cursor"), Playlist.create_object)
+        else:
+            return result
+        
+    @staticmethod
+    async def get_playlist_id_by_name_and_fk_server(name: str, fk_server: int) -> dict[bool, Union[int, str]]:
+        """ # Get a playlist id by name and fk server function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get one playlist stored in the database table by its name
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.get_playlist_id_by_name_and_fk_server()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Searched playlist name
+
+        Returns : 
+        ---
+            :class:`int` => the note id
+        """
+        # Get the query string
+        where = "fk_server = %(fk_server)s AND name = %(name)s"
+        query = f"SELECT id_playlist FROM {Playlist.TABLE} WHERE {where};"
+
+        # Execute the query
+        result = await Database.get_instance(Playlist.DATABASE).bind_exec(query, {"name" : name, "fk_server" : fk_server})
+
+        # Check if the query passed
+        if result.get("passed"):
+            return Playlist.format_object(result.get("cursor"), Playlist.create_object, True)
+        else:
+            return result
+        
+    @staticmethod
+    async def get_playlist_by_name_and_fk_server(name: str, fk_server: int) ->  dict[bool, Union["Playlist", str]]:
+        """ # Get a playlist by name and fk server function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Get one playlist stored in the database table by its name and fk server
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.get_playlist_by_name()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Searched playlist name
+
+        Returns : 
+        ---
+            :class:`int` => the note id
+        """
+        # Get the query string
+        where = "fk_server = %(fk_server)s AND name = %(name)s"
+        query = f"SELECT * FROM {Playlist.TABLE} WHERE {where};"
+
+        # Execute the query
+        result = await Database.get_instance(Playlist.DATABASE).bind_exec(query, {"name" : name, "fk_server" : fk_server})
+
+        # Check if the query passed
+        if result.get("passed"):
+            return Playlist.format_object(result.get("cursor"), Playlist.create_object)
+        else:
+            return result
+        
+    @staticmethod
+    async def create_playlist(name: str, description: str, id_file: int, id_server: int) -> dict[bool, Union[MySQLCursor, str]]:
+        """ # Create a playlist function
+        /!\\ This is a coroutine, it needs to be awaited
+        @staticmethod
+        
+        Description :
+        ---
+            Create a playlist in the database table
+        
+        Access : 
+        ---
+            src.database.models.tables.NoteList.py\n
+            NoteList.create_playlist()
+
+        Parameters : 
+        ---
+            - name : :class:`str` => Name of the playlist
+            - fk_server : :class:`int` => Foreign key of the server id
+
+        Returns : 
+        ---
+            :class:`NoteList|None` => The playlist which was created in database
+        """
+        # Get the query string
+        fields = "(id_playlist, name, description, fk_file, fk_server)"
+        params = "(null, %(name)s, %(description)s, %(fk_file)s, %(fk_server)s)"
+        query = f"INSERT INTO {Playlist.TABLE} {fields} VALUES {params};"
+
+        # Execute the query
+        result = await Database.get_instance(Playlist.DATABASE).bind_exec(query, {"name" : name, "description" : description, "fk_file" : id_file, "fk_server" : id_server})
+
+        # Return the result
+        return result
+        
+    @staticmethod
     def create_object(row: list) -> "Playlist":
         """ # Create object function
         @staticmethod

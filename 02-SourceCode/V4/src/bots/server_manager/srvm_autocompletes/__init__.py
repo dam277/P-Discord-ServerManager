@@ -5,3 +5,4 @@ from .channels.ChannelTypeAutocomplete import ChannelTypeAutocomplete
 from .distant_server.DistantServerAutocomplete import DistantServerAutocomplete
 from .tasks.TaskAutocomplete import TaskAutocomplete
 from .tasks.IntervalUnitAutocomplete import IntervalUnitAutocomplete
+from .music.PlaylistAutocomplete import PlaylistAutocomplete

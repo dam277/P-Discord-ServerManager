@@ -2,7 +2,7 @@ import json
 from abc import ABC, abstractmethod
 import nextcord
 
-import asyncio
+from ..database.models.srvm_tables.File import File
 
 from ..utils.enums.FileTypes import FileTypes
 
@@ -19,7 +19,7 @@ class Base(ABC):
         Command
     """
     # Shared class variables
-    file_type = None
+    file_type = FileTypes.DEFAULT
     
     def __init__(self):
         """ # Base class constructor
@@ -109,6 +109,42 @@ class Base(ABC):
             # Delete the category
             await category.delete()
 
+    def get_precise_time(self, seconds: int) -> str:
+        """ # Get precise time function
+        
+        Description :
+        ---
+            Get the precise time from seconds
+
+        Access : 
+        ---
+            src.bots.Base.py\n
+            Base.get_precise_time()
+
+        Parameters :
+        ---
+            seconds : :class:`int` => Time in seconds - format: mm:ss
+
+        Returns : 
+        ---
+            :class:`str`
+        """
+        # Setting the units
+        minute = 60
+
+        # Calculate the time in minutes and seconds
+        minutes = int(str(seconds / minute).split(".")[0])
+        seconds -= minutes * minute
+        
+        if len(str(minutes)) == 1:
+            minutes = f"0{minutes}"
+        
+        if len(str(seconds)) == 1:
+            seconds = f"0{seconds}"
+        
+        # Return the time
+        return f"{minutes}:{seconds}"
+
     def get_file_type(self, file_name: str):
         """ # Get file type function
         
@@ -139,3 +175,48 @@ class Base(ABC):
             self.file_type = FileTypes.MUSIC
         else:
             self.file_type = FileTypes.DEFAULT
+
+    async def get_file_id_by_type(self, interaction: nextcord.Interaction):
+        """ # Get file id by type function
+        
+        Description :
+        ---
+            Get the file id by type
+
+        Access : 
+        ---
+            src.bots.Base.py\n
+            Base.get_file_id_by_type()
+
+        Parameters :
+        ---
+            file_name : :class:`str` => Name of the file
+
+        Returns : 
+        ---
+            :class:`int`
+        """
+        if not self.file_name:
+            return
+        
+        # Get the file type
+        self.get_file_type(self.file_name)
+
+        # Get the file
+        file_result = await File.get_file_by_name_and_guild_id(self.file_name, self.guild_id)
+
+        # Check if the query passed
+        if not file_result.get("passed") or file_result.get("object") is None:
+            return await interaction.send(f"This file doesn't exists", ephemeral=True) if file_result.get("error") is None else await interaction.send(f"An error occured while getting the file : {file_result.get("error")}", ephemeral=True)
+        
+        # Get the image
+        images_result = await self.file_type.value.get_all_files()
+        if not images_result.get("passed") or not images_result.get("objects"):
+            return await interaction.send(f"An error occured while getting the image : {images_result.get("error")}", ephemeral=True)
+        
+        # Check if the file is an image
+        if file_result.get("object").id not in [image.id for image in images_result.get("objects")]:
+            return await interaction.send(f"This file is not an image", ephemeral=True)
+            
+        # Set the file
+        return file_result.get("object").id

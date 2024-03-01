@@ -1,6 +1,4 @@
 import nextcord
-from nextcord.ext import commands
-import os
 
 from ....utils.enums.permissions.DiscordPermissions import DiscordPermissions
 

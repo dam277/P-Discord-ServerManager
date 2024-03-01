@@ -48,7 +48,7 @@ class Music(File):
         super().__init__(id, name, path, fk_server)
 
     @staticmethod
-    async def get_all_musics() -> dict[bool, Union[list["Music"], str]]:
+    async def get_all_files() -> dict[bool, Union[list["Music"], str]]:
         """ # Get all Music function
         /!\\ This is a coroutine, it needs to be awaited
         @staticmethod
@@ -60,7 +60,7 @@ class Music(File):
         Access : 
         ---
             src.database.models.tables.Music.py\n
-            Music.get_all_musics()
+            Music.get_all_files()
 
         Returns : 
         ---
@@ -153,11 +153,49 @@ class Music(File):
             params = "(%(id_file)s)"
             query = f"INSERT INTO {Music.TABLE} {fields} VALUES {params};"
 
+            # Get the last file id
+            file_id_result = await File.get_last_file_id()
+
             # Execute the query
-            result = await Database.get_instance(Music.DATABASE).bind_exec(query, {"id_file" : result.get("id")})
+            result = await Database.get_instance(Music.DATABASE).bind_exec(query, {"id_file" : file_id_result.get("value")})
 
         # Return the result
         return result
+    
+    @staticmethod
+    async def get_musics_by_playlist_id(id_playlist: int) -> dict[bool, Union[list["Music"], str]]:
+        """ # Get musics by playlist id method
+
+        Description :
+        ---
+            This method is used to get the musics from a playlist id
+
+        Access :
+        ---
+            src.database.models.srvm_tables.Music
+            Music.get_musics_from_playlist_id()
+
+        Parameters :
+        ---
+            - id_playlist : :class:`int` => The id of the playlist
+
+        Returns :
+        ---
+            :class:`list` => A list of musics from the playlist id
+        """
+        # Get the query
+        where = "id_playlist = %(id_playlist)s"
+        inner_join = "music_playlist ON music_playlist.id_file = file.id_file"
+        query = f"SELECT file.id_file, name, path, fk_server FROM {File.TABLE} INNER JOIN {inner_join} WHERE {where}"
+
+        # Get the result
+        result = await Database.get_instance(Music.DATABASE).bind_exec(query, {"id_playlist": id_playlist})
+        
+        # Check if the query passed
+        if result.get("passed"):
+            return Music.format_list_object(result.get("cursor"), Music.create_object)
+        else:
+            return result
 
     @staticmethod
     async def delete_file_by_id(id_file: int) -> dict[bool, Union[MySQLCursor, str]]:

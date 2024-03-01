@@ -76,8 +76,6 @@ class GetNoteList(Get):
         ---
             :class:`None`
         """
-
-               # Execute the parent function
         # Execute the parent command
         await super().execute(interaction)
         if not self.has_permission:

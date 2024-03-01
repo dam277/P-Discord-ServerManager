@@ -60,7 +60,7 @@ class Table:
         """
         # Getting datas from result
         cursor_row = cursor.fetchone()
-        
+
         # Check if datas are filled if not return None
         if cursor_row is None or len(cursor_row) < 1:
             return {"passed" : True, "object" : None}
@@ -80,7 +80,7 @@ class Table:
         return {"passed" : True, "object" : obj}
     
     @staticmethod
-    def format_list_object(cursor: MySQLCursor, create_object_func: classmethod, uniquely_values = False) -> dict[bool, list[Union["Table", dict]]]:
+    def format_list_object(cursor: MySQLCursor, create_object_func: classmethod, uniquely_values: bool = False, can_be_none: bool = False ) -> dict[bool, list[Union["Table", dict]]]:
         """ # Format list object function
         @staticmethod
         
@@ -107,8 +107,10 @@ class Table:
             rows.append(dict(zip(cursor.column_names, row)))
         
         # Check if datas are filled
-        if len(rows) < 1:
+        if len(rows) < 1 and not can_be_none:
             return {"passed" : False, "objects" : None}
+        elif len(rows) < 1 and can_be_none:
+            return {"passed" : True, "values" : rows}
         
         if uniquely_values:
             # Check if there is only one value
@@ -122,4 +124,5 @@ class Table:
             # Create a server object and add it to the objs list
             obj = create_object_func(row)
             objs.append(obj)
+
         return {"passed" : True, "objects" : objs}
