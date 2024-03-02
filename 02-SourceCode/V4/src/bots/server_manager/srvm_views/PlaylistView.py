@@ -2,7 +2,6 @@ from time import sleep
 import nextcord
 import os
 import ffmpeg
-from nextcord.ui import Select
 from .SelectorView import SelectorView
 
 from ....database.models.srvm_tables.files.Music import Music
@@ -288,7 +287,7 @@ class PlaylistView(nextcord.ui.View, View):
         # Check if the file exists
         if os.path.exists(current_music.path):
             # Get the time of the music
-            self.duration = int(ffmpeg.probe(current_music.path)['format']['duration'].split(".")[0])
+            self.duration = int(ffmpeg.probe(current_music.path)['format']['duration'].split(".")[0]) + 1
             self.music_duration = self.get_precise_time(self.duration)
         
         # Modify the embed with the new music
