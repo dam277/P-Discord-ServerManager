@@ -1,3 +1,4 @@
+import os
 import nextcord
 from nextcord.ext import commands
 
@@ -80,7 +81,7 @@ class Setup(Command):
         if not srv_result.get("passed"):
             Logger.log(LogDefinitions.ERROR, f"Error while checking if server {self.name} already exists : {srv_result.get('error')}")
             return await interaction.send(f"Error while checking if server {self.name} already exists", ephemeral=True)
-
+        
         # Check if the server already exists
         if srv_result.get("object") is None:
             # Create the server
@@ -88,6 +89,12 @@ class Setup(Command):
 
             # Check if the query passed
             if result.get("passed"):
+                # Set the paths for the file
+                dir_path = f"{self.settings["resources"]["filesPath"]}/{self.guild_id}"
+                # Create the directory if it doesn't exist
+                if not os.path.exists(dir_path):
+                    os.makedirs(dir_path)
+
                 return await interaction.send(f"Server {self.name} created", ephemeral=True)
 
         # If the server already exists return an error message as discord response
