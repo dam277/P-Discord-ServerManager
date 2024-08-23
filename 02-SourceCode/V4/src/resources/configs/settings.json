@@ -1,0 +1,13 @@
+{
+    "resources" : 
+    {
+        "filesPath" : "src/resources/files",
+        "max_file_size" : 26214400,
+        "extensions": 
+        {
+            "image": ["png", "jpg", "jpeg", "gif"], 
+            "music": ["mp3", "wav", "ogg", "m4a"]
+        },
+        "private_category_prefix": "[dcm]-pv"
+    }
+}
