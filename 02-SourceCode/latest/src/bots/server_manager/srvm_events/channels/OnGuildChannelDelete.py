@@ -1,8 +1,6 @@
 import nextcord
 import os
 
-from src.bots.server_manager.srvm_commands import channels
-
 from typing import Union
 
 from ...._commands.Command import Command
